@@ -17,6 +17,8 @@ MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결�
 | [notes/INTEGRATION.md](notes/INTEGRATION.md) | 통합 상세 설명·범위·검증 한계 |
 | [notes/PARITY_PROTOCOL.md](notes/PARITY_PROTOCOL.md) | 공식 알고리즘과 FlyGCL 공통 실험 프로토콜 대조·수정 기록 |
 | [notes/PARITY_VERIFICATION.md](notes/PARITY_VERIFICATION.md) | 실제 GitHub Actions CPU 테스트 PASS 및 한계 |
+| [notes/FORWARD_VERIFICATION.md](notes/FORWARD_VERIFICATION.md) | **6단계 실제 ViT-B/16 생성·Forward/Backward CPU 검증 성공 로그** |
+| [scripts/verify_model_forward.py](scripts/verify_model_forward.py) | 실제 ViT-B/16 + 공식 Prompt CPU 모델 테스트 |
 | [scripts/verify_parity.py](scripts/verify_parity.py) | 공식 Prompt/Mask/Loss 및 Si-Blurry 샘플러 동작 검증 코드 |
 | [notes/CPU_VERIFICATION.md](notes/CPU_VERIFICATION.md) | 공식 가중치 두 개의 실제 PyTorch CPU 로딩 성공 로그 |
 
@@ -37,6 +39,6 @@ MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결�
 bash dongkyu_work/misa/scripts/run_misa.sh
 ```
 
-실행 전 공식 가중치 `g_prompt.pt`, `e_prompt.pt`가 `dongkyu_work/misa/checkpoints/`에 필요합니다. 현재 **공식 바이너리 두 개를 원본 Git SHA 그대로 확보·업로드했습니다.** **두 가중치의 PyTorch CPU 로딩·SHA·shape·dtype·finite 검사까지 GitHub Actions에서 통과했습니다.** [검증 증빙](notes/CPU_VERIFICATION.md). ViT 모델 생성/전체 실행과 논문 성능 재현은 아직 검증하지 않았습니다.
+실행 전 공식 가중치 `g_prompt.pt`, `e_prompt.pt`가 `dongkyu_work/misa/checkpoints/`에 필요합니다. 현재 **공식 바이너리 두 개를 원본 Git SHA 그대로 확보·업로드했습니다.** **두 가중치의 PyTorch CPU 로딩·SHA·shape·dtype·finite 검사까지 GitHub Actions에서 통과했습니다.** [검증 증빙](notes/CPU_VERIFICATION.md). ViT-B/16의 전체 구조 생성 및 합성 입력 Forward/Backward는 **CPU 검증 성공**했습니다([검증 증빙](notes/FORWARD_VERIFICATION.md)). 외부 **사전학습 백본 가중치 로딩**, 실제 데이터·Trainer 전체 실행 및 논문 성능 재현은 아직 검증하지 않았습니다.
 
 공식 MISA 원본 코드는 [kangzhiq/MISA](https://github.com/kangzhiq/MISA)이고, **원본 코드는 수정하지 않았습니다**.

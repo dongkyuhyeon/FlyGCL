@@ -63,3 +63,9 @@ All MISA-specific implementations and scripts are in `dongkyu_work/misa/`; only 
 - Shared sampler/evaluation schedule/metrics are provided by FlyGCL _Trainer; note method-specific inference mask differences.
 
 - CPU parity CI **passed**: [run 38357870025](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025). [Verified checks](PARITY_VERIFICATION.md): official Prompt selection, training mask/loss, MISA raw-logit evaluation, synthetic Si-Blurry sampler determinism, shared Trainer wiring. Full ViT model/runtime remains untested.
+
+## 6단계: 실제 ViT-B/16 Forward/Backward CPU 검증
+
+- GitHub Actions [성공한 실제 실행 로그](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38362437114) — Python 3.10, PyTorch 2.5.1 CPU, timm 0.6.12.
+- [상세 기록](FORWARD_VERIFICATION.md): 실제 ViT-B/16 12블록 모델 생성, 공식 G/E Prompt 삽입, 합성 데이터 Forward/CE+similarity loss/Backward, Task 1 진입 후 Eval Forward **모두 PASS**.
+- **테스트 한계:** 인터넷에서 `.npz`를 다운로드하지 않도록 **백본만 랜덤 초기화**한 CPU 구조 검증. 공식 Prompt는 실물 사용. Full CIFAR-100 Trainer 실행/정량 성능 재현은 수행하지 않음.
