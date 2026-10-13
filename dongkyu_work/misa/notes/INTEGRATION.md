@@ -24,7 +24,7 @@ Source snapshot: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`
 - Reuse: FlyGCL `models/dualprompt.py` for prompt insertion, cosine-similarity selection, CLS representation, and loss `CE + similarity`; FlyGCL `methods/dualprompt.py` for online training and batch logit mask; FlyGCL `_Trainer` for the sampler, augmentation, logs, metrics, task boundaries.
 - Override: fixed official prompt layout, tensor-shape-checked pretrained loading, **raw-logit evaluation**.
 - Disable optional unrelated RPFC/EMA/MePo features to avoid altering the MISA baseline.
-- Prompt index selection implementation originates from FlyGCL's repaired global-slice indexing (vs the original upstream implementation). Therefore not claimed to be byte-for-byte or numerically identical to upstream.
+- MISA-only `MISAExpertPrompt` reproduces upstream released **local-index gather** (not FlyGCL's global-index fix). Direct CPU parity with upstream Prompt.forward passed; no real-dataset numerical equivalence claimed.
 
 ## Official ISA pretrained prompts: uploaded (2026-10-13)
 
@@ -51,7 +51,7 @@ python main.py --method misa --dataset cifar100 --n_tasks 5 --n 50 --m 10 \
 - **Not done:** importing the *full* FlyGCL runtime with actual ViT backbone and official tensors; no dataset run, no GPU training, no numerical equivalence/reproduction claim.
 - **Not implemented:** ISA/FAM pretraining integration and generation of new official initial-session prompt checkpoints. Reuse of provided ISA pretrained prompt tensors is the downstream comparison path.
 
-Phase 2a goal: ready-to-register model/trainer; official checkpoint acquisition and CPU tensor loading have passed. Full ViT-model instantiation and runtime integration validation remain outstanding.
+Phase 2a goal: registered MISA, official Prompt checkpoint CPU validation passed. Stage 6 full ViT model structure Forward/Backward, Stage 7 shared Trainer and Stage 8 synthetic `main.py` entrypoint checks have since passed. Actual pretrained ViT + real dataset / CUDA GPU run remains unverified.
 
 ## Directory organization (post-reorganization)
 
@@ -75,3 +75,9 @@ All MISA-specific implementations and scripts are in `dongkyu_work/misa/`; only 
 - **SUCCESS:** [GitHub Actions 실행 38364210845](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38364210845). [검증 보고서](TRAINER_VERIFICATION.md), [검증 스크립트](../scripts/verify_trainer.py).
 - 공통 Si-Blurry OnlineSampler/DataLoader를 사용한 100-class 가상 이미지 입력, MISA의 Logit batch mask, 모델 Loss, Backward, Adam.step, 파라미터 변경, OnlineTestSampler/raw-logit 평가, Task 0→1 전환 후 두 번째 업데이트를 모두 통과했습니다.
 - GPU/전체 사전학습 ViT 대신 작은 proxy 백본을 사용한 **연결 시험**이므로 실제 `main.py` GPU runner·정량 지표 재현은 별개로 남습니다. 기존 비교군 소스 변경 없음.
+
+## 8/9단계 최종 확인 (2026-10-13)
+
+- [8단계 검증 및 실제 CI 로그](ENTRYPOINT_VERIFICATION.md): `main.py` 실행 경로, 5 Task, 51 updates, 20 evals, shared result `.npy` files; launcher path-independent and missing-Prompt preflight checks.
+- [9단계 최종 코드 감사/박사님 보고](FINAL_REPORT.md) 및 [재검증 스크립트](../scripts/verify_final_audit.py): 공식 원본 60개, 기존 비교군 공통 파일 11개 무변경; 원본 parity와 알고리즘별 eval mask 예외 기록.
+- GPU 및 실제 `pretrained=True` 백본 다운로드의 완전 실행은 실험 범위 밖이며 완료로 오인하지 않습니다.
