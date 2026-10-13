@@ -117,6 +117,14 @@ def make_args():
         return base_parser()
 
 
+def first_multiclass_batch(data_loader):
+    """Pick an actual streamed batch with >=2 unique labels (fixed seed)."""
+    for images, labels, indices in data_loader:
+        if len(set(labels.tolist())) >= 2:
+            return images, labels, indices
+    raise AssertionError("No multi-class batch in this tiny Si-Blurry task stream")
+
+
 def assert_batch_mask(mask, labels):
     assert isinstance(mask, torch.Tensor) and mask.ndim == 1
     actual = torch.nonzero(torch.isfinite(mask)).flatten().tolist()
@@ -183,7 +191,7 @@ def main():
         with patch.object(trainer, "model_forward", side_effect=inspect_model_forward):
             trainer.train_sampler.set_task(0)
             trainer.online_before_task(0)
-            images, labels, indices = next(iter(trainer.train_dataloader))
+            images, labels, indices = first_multiclass_batch(trainer.train_dataloader)
             assert len(set(labels.tolist())) >= 2, "Need two batch classes to test masked CE"
             fc_before = trainer.model_without_ddp.backbone.fc.weight.detach().clone()
             prompt_before = trainer.model_without_ddp.e_prompt.prompts.detach().clone()
@@ -213,7 +221,7 @@ def main():
             assert trainer.model_without_ddp.task_count == 1
             trainer.train_sampler.set_task(1)
             trainer.online_before_task(1)
-            second_images, second_labels, second_indices = next(iter(trainer.train_dataloader))
+            second_images, second_labels, second_indices = first_multiclass_batch(trainer.train_dataloader)
             assert len(set(second_labels.tolist())) >= 2
             loss1, acc1 = trainer.online_step(second_images, second_labels, second_indices)
             assert math.isfinite(loss1) and 0 <= acc1 <= 1
