@@ -11,10 +11,70 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from models.dualprompt import DualPrompt
+from models.l2p import Prompt
 
 logger = logging.getLogger(__name__)
+
+
+
+class MISAExpertPrompt(Prompt):
+    """Preserve upstream MISA's *local* topk prompt gather inside key slices.
+
+    Official kangzhiq/MISA models/dualprompt.py::Prompt.forward computes
+    cosine similarity with key[s:e], but gathers self.prompts with unshifted
+    topk. Generic FlyGCL Prompt adds +s, changing the released baseline.
+    Existing parameter objects and RNG initialization are preserved.
+    """
+
+    def __init__(self, previous: Prompt):
+        nn.Module.__init__(self)
+        self.pool_size = previous.pool_size
+        self.selection_size = previous.selection_size
+        self.prompt_len = previous.prompt_len
+        self.dimention = previous.dimention
+        self._diversed_selection = previous._diversed_selection
+        self._batchwise_selection = previous._batchwise_selection
+        self.key = previous.key
+        self.prompts = previous.prompts
+        self.register_buffer("frequency", previous.frequency)
+        self.register_buffer("counter", previous.counter)
+        self.last_topk = None
+        self.last_selected_indices = None
+
+    def forward(self, query: torch.Tensor, s=None, e=None, **kwargs):
+        B, D = query.shape
+        assert D == self.dimention, (
+            f"Query dimention {D} does not match prompt dimention {self.dimention}"
+        )
+        if s is None and e is None:
+            match = 1 - F.cosine_similarity(query.unsqueeze(1), self.key, dim=-1)
+        else:
+            assert s is not None and e is not None
+            match = 1 - F.cosine_similarity(query.unsqueeze(1), self.key[s:e], dim=-1)
+        if self.training and self._diversed_selection:
+            scores = match * F.normalize(self.frequency, p=1, dim=-1)
+        else:
+            scores = match
+        _, topk = scores.topk(self.selection_size, dim=-1, largest=False, sorted=True)
+        if self._batchwise_selection:
+            idx, counts = topk.unique(sorted=True, return_counts=True)
+            _, mosts = counts.topk(self.selection_size, largest=True, sorted=True)
+            topk = idx[mosts].clone().expand(B, -1)
+        # Preserve released MISA behavior: local topk, NOT topk+s.
+        self.counter += torch.bincount(
+            topk.reshape(-1).clone(), minlength=self.pool_size
+        )
+        selected = self.prompts.repeat(B, 1, 1, 1).gather(
+            1, topk.unsqueeze(-1).unsqueeze(-1).expand(
+                -1, -1, self.prompt_len, self.dimention
+            ).clone()
+        )
+        self.last_topk = topk.detach()
+        self.last_selected_indices = topk.detach()
+        return match.gather(1, topk), selected
 
 
 class MISA(DualPrompt):
@@ -34,6 +94,11 @@ class MISA(DualPrompt):
             )
         if kwargs.get("use_rp_gate") or kwargs.get("use_ema_head"):
             raise ValueError("MISA does not include FlyGCL RPFC or EMA head extensions.")
+        if kwargs.get("step_num", -1) > 1:
+            raise ValueError(
+                "MISA follows official task boundaries; remove --step_num. "
+                "Shared n_tasks protocol must be used."
+            )
         if kwargs.get("mepo_backbone_path") or kwargs.get("cov_path"):
             raise ValueError("MISA cannot be combined with optional MePo calibration.")
         # The MISA method always uses ISA-initialized prompts; bypass the
@@ -54,6 +119,8 @@ class MISA(DualPrompt):
             load_pt=False,
             **kwargs,
         )
+        # MISA-only upstream prompt selection, no changes to other baselines.
+        self.e_prompt = MISAExpertPrompt(self.e_prompt)
         # Avoid silently accepting an uninitialized model as MISA.
         self.misa_prompt_dir = str(misa_prompt_dir)
         self._load_misa_prompts(Path(self.misa_prompt_dir))

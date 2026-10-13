@@ -56,3 +56,8 @@ Phase 2a goal: ready-to-register model/trainer; official checkpoint acquisition 
 ## Directory organization (post-reorganization)
 
 All MISA-specific implementations and scripts are in `dongkyu_work/misa/`; only the minimal root-level import shims and registry/CLI glue remain in `models/`, `methods/`, and `configuration/` so that `python main.py --method misa` still resolves. No algorithmic code was changed during the relocation. The `run_misa.sh` entry point is now `bash dongkyu_work/misa/scripts/run_misa.sh` from the repository root.
+
+## Algorithm fidelity and shared protocol
+
+- See [PARITY_PROTOCOL.md](PARITY_PROTOCOL.md): official MISA uses local topk indices in Prompt gathering, differing from FlyGCL Prompt's global-slice offset. The MISA-only implementation preserves released upstream behavior.
+- Shared sampler/evaluation schedule/metrics are provided by FlyGCL _Trainer; note method-specific inference mask differences.

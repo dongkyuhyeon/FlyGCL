@@ -15,6 +15,7 @@ MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결�
 | [checkpoints/](checkpoints/) | 공식 ISA Prompt 가중치 2개가 Git에 저장된 폴더 및 검증 안내 |
 | [notes/MISA_vs_FlyGCL.md](notes/MISA_vs_FlyGCL.md) | 공식 MISA와 FlyGCL의 코드 차이 |
 | [notes/INTEGRATION.md](notes/INTEGRATION.md) | 통합 상세 설명·범위·검증 한계 |
+| [notes/PARITY_PROTOCOL.md](notes/PARITY_PROTOCOL.md) | 공식 알고리즘과 FlyGCL 공통 실험 프로토콜 대조·수정 기록 |
 | [notes/CPU_VERIFICATION.md](notes/CPU_VERIFICATION.md) | 공식 가중치 두 개의 실제 PyTorch CPU 로딩 성공 로그 |
 
 ## 루트에 남겨야 하는 최소 연결부
