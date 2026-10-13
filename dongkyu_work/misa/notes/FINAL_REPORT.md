@@ -37,6 +37,4 @@ bash dongkyu_work/misa/scripts/run_misa.sh
 
 마지막 명령은 **실제 학습**을 시작합니다. 아직 실행하지 않았습니다. 실행 중 공통 ViT 백본은 `models/vit.py`를 통해 `ViT-B_16.npz`를 다운로드/캐시할 수 있으므로, 네트워크 및 저장공간 확보가 필요합니다. `DATA_DIR`, `MISA_PROMPT_DIR`은 환경변수로 바꿀 수 있습니다.
 
-## 박사님 보고용 문안
 
-> MISA 공식 공개 코드를 기존 FlyGCL의 독립 비교군(`--method misa`)으로 통합하고, 공식 ISA Prompt 가중치 및 핵심 Prompt 선택·Logit Mask·Loss·평가 로직을 검증했습니다. 동일 Si-Blurry 프로토콜에서 실행되도록 공유 Trainer에 연결했으며, CPU 합성 데이터로 실제 `main.py`의 5개 Task, 51회 온라인 업데이트, 20회 평가 및 결과 저장까지 확인했습니다. 기존 비교군 코드와 공식 원본은 변경하지 않았습니다. 단, 본 확인은 실행 연결 검증으로, 실제 사전학습 ViT 및 CIFAR-100 GPU 실험과 논문 성능 재현은 수행하지 않았습니다.
