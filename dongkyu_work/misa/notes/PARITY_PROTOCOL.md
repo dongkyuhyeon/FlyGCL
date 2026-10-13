@@ -40,6 +40,6 @@ MISA와 FlyPrompt는 동일 `methods/_trainer.py`를 기반으로 합니다.
 
 ## 검증 및 한계
 
-`dongkyu_work/misa/scripts/verify_parity.py`에서 공식 원본 Prompt class를 AST 추출하여 실측값 비교, training mask/loss/eval, shared protocol source 확인을 수행합니다. 워크플로는 `.github/workflows/verify-misa-parity.yml`. CI 결과 완료 시 링크와 PASS/FAIL을 기록합니다.
+`dongkyu_work/misa/scripts/verify_parity.py`에서 공식 원본 Prompt class를 AST 추출하여 실측값 비교, training mask/loss/eval, shared protocol source 확인을 수행합니다. 워크플로는 `.github/workflows/verify-misa-parity.yml`. [CI 실행 결과](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025): **SUCCESS**. Prompt 10 cases, training mask/loss, raw-logit evaluation, shared Trainer wiring 및 **실제 가상 데이터셋 기반 5 Task Si-Blurry sampler의 동일 seed 결과** 모두 PASS. 세부 로그는 [PARITY_VERIFICATION.md](PARITY_VERIFICATION.md)에 기록했습니다.
 
 **아직 검증하지 않은 것:** 실제 ViT-B/16 전체 모델 생성, Forward/Backward GPU 실행, 전체 Si-Blurry Dataset 학습, 논문 수치 재현, 모델별 동일 seed에서 전체 학습 stochastic 경로의 정량적 동일성. 이번 검증은 실제 GPU 학습/성능 측정이 아닙니다.

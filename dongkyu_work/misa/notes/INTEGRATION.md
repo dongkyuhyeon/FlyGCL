@@ -61,3 +61,5 @@ All MISA-specific implementations and scripts are in `dongkyu_work/misa/`; only 
 
 - See [PARITY_PROTOCOL.md](PARITY_PROTOCOL.md): official MISA uses local topk indices in Prompt gathering, differing from FlyGCL Prompt's global-slice offset. The MISA-only implementation preserves released upstream behavior.
 - Shared sampler/evaluation schedule/metrics are provided by FlyGCL _Trainer; note method-specific inference mask differences.
+
+- CPU parity CI **passed**: [run 38357870025](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025). [Verified checks](PARITY_VERIFICATION.md): official Prompt selection, training mask/loss, MISA raw-logit evaluation, synthetic Si-Blurry sampler determinism, shared Trainer wiring. Full ViT model/runtime remains untested.
