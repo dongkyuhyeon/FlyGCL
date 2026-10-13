@@ -1,4 +1,4 @@
-# Dongkyu's FlyGCL workspace
+# Dongkyu  FlyGCL workspace
 
 이 폴더는 원본 FlyGCL 코드를 보존하면서 개인 연구 작업을 정리하기 위한 공간입니다.
 
