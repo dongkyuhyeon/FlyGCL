@@ -1,4 +1,4 @@
-# MISA FlyGCL 통합 최종 검증 및 박사님 보고용 요약 (2026-10-13)
+# MISA FlyGCL 통합 최종 검증 요약 (2026-10-13)
 
 **개발 목표:** 공식 MISA (ICLR 2025)의 downstream Prompt 초기값·핵심 알고리즘을 보존하면서, 개인 FlyGCL fork의 `python main.py --method misa`로 공통 Si-Blurry benchmark / metric writer에 연결. 기존 비교군 코드는 유지하고, 개인 작업은 `dongkyu_work/misa/`에서 관리합니다.
 
