@@ -1,12 +1,14 @@
 # MISA 통합 작업 기록
 
-이 폴더는 MISA를 FlyGCL의 공통 Si-Blurry 학습·평가 프로토콜에 연동하기 위한 분석과 변경 사항을 기록합니다.
+MISA (ICLR 2025) 공식 코드와 FlyGCL 사이의 차이를 분석한 문서를 보관합니다.
 
-## 기록할 항목
+## 1단계 (완료)
+- [**MISA_vs_FlyGCL.md**](./MISA_vs_FlyGCL.md): 공식 코드와 현재 FlyGCL의 구조·학습·Prompt·Mask·FAM 차이 분석
+- [**공식 코드 보관함**](../original/): upstream 커밋을 고정한 원본 텍스트 소스 및 복사 manifest
 
-- MISA 공식 코드와 FlyGCL 기존 구현의 차이
-- 실제 수정한 파일, 변경 이유, 관련 커밋
-- 공통 데이터 스트림·학습 설정·평가 인터페이스 연결 사항
-- GPU 성능 실험과 구분한 정적 점검 및 미검증 항목
+## 2단계 (아직 수행하지 않음)
+- MISA 독립 `--method misa` 등록과 공통 Si-Blurry Trainer 통합
+- Pretrained Prompt 가중치 로딩 인터페이스 보완
+- 공통 평가 설정 확인
 
-**현재는 폴더 구조만 준비한 상태이며 MISA 통합은 아직 진행하지 않았습니다.**
+이번 단계에서는 실제 훈련·정확도 실험을 수행하지 않습니다.
