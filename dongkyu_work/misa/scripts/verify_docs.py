@@ -36,8 +36,13 @@ def main():
     )
     issues = []
     checked_links = 0
+    # Keep shared research documentation free of audience-specific report drafts.
+    audience_specific = re.compile(r"박사님|교수님|보고용")
+
     for doc in all_docs:
         txt = doc.read_text(encoding="utf-8")
+        if audience_specific.search(txt):
+            issues.append(f"{doc.relative_to(ROOT)} -> audience-specific wording found")
         for match in LINK.finditer(txt):
             target = match.group(1).strip().strip("<>").split("#", 1)[0].split("?", 1)[0]
             if not target or target.startswith(("https://", "http://", "mailto:", "tel:", "//", "data:")):
@@ -65,6 +70,7 @@ def main():
     print(f"PASS workspace documentation: {len(all_docs)} files, {checked_links} valid local links")
     print("PASS first-visit path: workspace -> MISA -> folders -> result/evidence")
     print("PASS concise directory README limits; official source snapshot excluded")
+    print("PASS no audience-specific reporting text in workspace Markdown")
 
 
 if __name__ == "__main__":
