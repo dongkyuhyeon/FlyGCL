@@ -62,10 +62,16 @@ All MISA-specific implementations and scripts are in `dongkyu_work/misa/`; only 
 - See [PARITY_PROTOCOL.md](PARITY_PROTOCOL.md): official MISA uses local topk indices in Prompt gathering, differing from FlyGCL Prompt's global-slice offset. The MISA-only implementation preserves released upstream behavior.
 - Shared sampler/evaluation schedule/metrics are provided by FlyGCL _Trainer; note method-specific inference mask differences.
 
-- CPU parity CI **passed**: [run 38357870025](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025). [Verified checks](PARITY_VERIFICATION.md): official Prompt selection, training mask/loss, MISA raw-logit evaluation, synthetic Si-Blurry sampler determinism, shared Trainer wiring. Full ViT model/runtime remains untested.
+- CPU parity CI **passed**: [run 38357870025](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025). [Verified checks](PARITY_VERIFICATION.md): official Prompt selection, training mask/loss, MISA raw-logit evaluation, synthetic Si-Blurry sampler determinism, shared Trainer wiring. Stage 6 full ViT structure forward/backward passed separately, while full pretrained runtime remains untested.
 
 ## 6단계: 실제 ViT-B/16 Forward/Backward CPU 검증
 
 - GitHub Actions [성공한 실제 실행 로그](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38362437114) — Python 3.10, PyTorch 2.5.1 CPU, timm 0.6.12.
 - [상세 기록](FORWARD_VERIFICATION.md): 실제 ViT-B/16 12블록 모델 생성, 공식 G/E Prompt 삽입, 합성 데이터 Forward/CE+similarity loss/Backward, Task 1 진입 후 Eval Forward **모두 PASS**.
 - **테스트 한계:** 인터넷에서 `.npz`를 다운로드하지 않도록 **백본만 랜덤 초기화**한 CPU 구조 검증. 공식 Prompt는 실물 사용. Full CIFAR-100 Trainer 실행/정량 성능 재현은 수행하지 않음.
+
+## 7단계: 공유 Trainer 온라인 업데이트 연동 CPU 검증
+
+- **SUCCESS:** [GitHub Actions 실행 38364210845](https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38364210845). [검증 보고서](TRAINER_VERIFICATION.md), [검증 스크립트](../scripts/verify_trainer.py).
+- 공통 Si-Blurry OnlineSampler/DataLoader를 사용한 100-class 가상 이미지 입력, MISA의 Logit batch mask, 모델 Loss, Backward, Adam.step, 파라미터 변경, OnlineTestSampler/raw-logit 평가, Task 0→1 전환 후 두 번째 업데이트를 모두 통과했습니다.
+- GPU/전체 사전학습 ViT 대신 작은 proxy 백본을 사용한 **연결 시험**이므로 실제 `main.py` GPU runner·정량 지표 재현은 별개로 남습니다. 기존 비교군 소스 변경 없음.
