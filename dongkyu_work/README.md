@@ -1,24 +1,13 @@
-# Dongkyu  FlyGCL workspace
+# Research workspace
 
-이 폴더는 원본 FlyGCL 코드를 보존하면서 개인 연구 작업을 정리하기 위한 공간입니다.
+이 폴더는 [FlyGCL](../README.md)에 **연구 방법을 추가·검증하는 개인 작업 공간**입니다. 원본 프레임워크 사용법은 상위 README에서 확인하세요.
 
-## 작업 목적
+## 프로젝트
 
-- MISA (ICLR 2025) 공식 저장소와 FlyGCL 기존 구현 차이 분석
-- MISA를 FlyGCL의 Si-Blurry 공통 데이터 스트림 및 평가 프로토콜에 맞게 통합 준비
-- 공식코드 기반으로 FlyGCL코드안에 통합해서 같은 프로토콜에서 실행 가능하게 준비 
-## 원칙
+| 프로젝트 | 목적 | 바로가기 |
+| --- | --- | --- |
+| **[MISA (ICLR 2025)](misa/README.md)** | 공식 MISA를 FlyGCL의 `--method misa` 비교군으로 통합 | [시작 안내](misa/README.md) · [최종 검증](misa/notes/FINAL_REPORT.md) |
 
-- 원본 FlyGCL 구조(`methods/`, `models/`, `configuration/`, `scripts/`)는 필요한 경우에만 수정합니다.
-- 실제 비교군 등록에 필요한 실행 코드는 해당 기존 디렉터리에 연결합니다.
-- 현재 단계에서는 GPU 성능 실험을 수행하지 않습니다.
+**읽는 순서:** 프로젝트 README → `implementation/`(실제 코드) 또는 `scripts/`(실행·검증) → `notes/`(세부 증빙).
 
-**MISA 공식 코드:** https://github.com/kangzhiq/MISA
-
-**FlyGCL 원본:** https://github.com/AnAppleCore/FlyGCL
-
-
-## 개인 작업 탐색
-
-- [MISA (ICLR 2025) 전체 작업 모음](misa/README.md) — 공식 코드, 독립 모델·Trainer 구현, 실행 스크립트, Prompt 경로와 비교 분석 문서를 한 곳에서 관리합니다.
-- MISA 이외의 FlyGCL 기존 비교군 코드는 원래 디렉터리를 유지합니다.
+기존 FlyGCL 공통 코드는 다른 비교군과 공유하므로 여기에 복사하지 않습니다. 실제 폴더 이름은 **`dongkyu_work/`**입니다.

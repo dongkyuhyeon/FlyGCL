@@ -1,51 +1,44 @@
-# MISA 작업 공간 (dongkyu_work/misa)
+# MISA on FlyGCL
 
-MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결하기 위한 **개인 작업 전용 폴더**입니다.
+공식 **MISA (ICLR 2025)** 를 FlyGCL에서 `--method misa`로 선택해 **공통 Si-Blurry 프로토콜로 비교**할 수 있도록 통합했습니다.
 
-## 폴더 안내
+**현재 상태:** 통합 및 CPU 연결 검증 **완료**. 실제 CIFAR-100 + 사전학습 ViT GPU 학습·성능 재현은 수행하지 않았습니다. → [검증 결과](notes/FINAL_REPORT.md)
 
-| 경로 | 용도 |
-| --- | --- |
-| [original/MISA/](original/MISA/) | 수정 없이 보관한 공식 MISA 텍스트 코드 스냅샷 (60개 파일) |
-| [original/SOURCE_MANIFEST.md](original/SOURCE_MANIFEST.md) | 공식 Git SHA·출처·미포함 바이너리 기록 |
-| [implementation/model.py](implementation/model.py) | FlyGCL에서 쓰는 MISA 모델의 실제 구현 |
-| [implementation/trainer.py](implementation/trainer.py) | FlyGCL에서 쓰는 MISA Trainer의 실제 구현 |
-| [scripts/run_misa.sh](scripts/run_misa.sh) | MISA 실행 설정 예시 |
-| [scripts/verify_prompts.py](scripts/verify_prompts.py) | 공식 SHA 및 tensor dtype/shape CPU 로딩 검증 스크립트 |
-| [checkpoints/](checkpoints/) | 공식 ISA Prompt 가중치 2개가 Git에 저장된 폴더 및 검증 안내 |
-| [notes/MISA_vs_FlyGCL.md](notes/MISA_vs_FlyGCL.md) | 공식 MISA와 FlyGCL의 코드 차이 |
-| [notes/INTEGRATION.md](notes/INTEGRATION.md) | 통합 상세 설명·범위·검증 한계 |
-| [notes/PARITY_PROTOCOL.md](notes/PARITY_PROTOCOL.md) | 공식 알고리즘과 FlyGCL 공통 실험 프로토콜 대조·수정 기록 |
-| [notes/PARITY_VERIFICATION.md](notes/PARITY_VERIFICATION.md) | 실제 GitHub Actions CPU 테스트 PASS 및 한계 |
-| [notes/FORWARD_VERIFICATION.md](notes/FORWARD_VERIFICATION.md) | **6단계 실제 ViT-B/16 생성·Forward/Backward CPU 검증 성공 로그** |
-| [scripts/verify_model_forward.py](scripts/verify_model_forward.py) | 실제 ViT-B/16 + 공식 Prompt CPU 모델 테스트 |
-| [scripts/verify_parity.py](scripts/verify_parity.py) | 공식 Prompt/Mask/Loss 및 Si-Blurry 샘플러 동작 검증 코드 |
-| [scripts/verify_trainer.py](scripts/verify_trainer.py) | **7단계 CPU Trainer·Sampler·Batch Mask·Adam 테스트 코드** |
-| [notes/TRAINER_VERIFICATION.md](notes/TRAINER_VERIFICATION.md) | **7단계 실제 GitHub Actions 성공 로그와 한계** |
-| [scripts/verify_entrypoint.py](scripts/verify_entrypoint.py) | **8단계 실제 main.py/5-task/결과 파일 CPU 검증 코드** |
-| [scripts/verify_launcher.py](scripts/verify_launcher.py) | **8단계 실행 셸 경로·옵션·가중치 필수 검증 코드** |
-| [notes/ENTRYPOINT_VERIFICATION.md](notes/ENTRYPOINT_VERIFICATION.md) | **8단계 실제 CI 로그** |
-| [scripts/verify_final_audit.py](scripts/verify_final_audit.py) | **9단계 원본/기존 모델 변경 없음 자동 감사** |
-| [notes/FINAL_REPORT.md](notes/FINAL_REPORT.md) | **최종 검증 요약·박사님 보고용 문안** |
-| [notes/CPU_VERIFICATION.md](notes/CPU_VERIFICATION.md) | 공식 가중치 두 개의 실제 PyTorch CPU 로딩 성공 로그 |
+## 실행
 
-## 루트에 남겨야 하는 최소 연결부
-
-- `models/misa.py`, `methods/misa.py`: 개인 폴더 구현을 import하는 **얇은 연결 파일**만 있습니다.
-- `models/__init__.py`, `methods/__init__.py`: 기존 FlyGCL 실행 모델 선택 등록부 (`misa`).
-- `configuration/config.py`: `--misa_prompt_dir` 옵션.
-- `README.md`: 전체 프로젝트 안내 링크.
-
-완전히 모두 개인 폴더에만 두면 FlyGCL의 기존 `--method misa` 등록 및 실행 경로가 끊어질 수 있어, 필수 연결부만 루트에 유지합니다.
-
-## 실행 예시 (현재 실제 학습은 수행하지 않음)
-
-저장소 루트에서 (또는 셸 파일 경로를 절대경로로 지정해 다른 폴더에서):
+Python 3.10 및 [FlyGCL 의존성](../../requirements.txt), 실제 데이터·ViT-B/16 백본 가중치를 준비한 후 저장소 루트에서:
 
 ```bash
+# 학습 없이 Prompt 검증
+python dongkyu_work/misa/scripts/verify_prompts.py
+
+# 실제 MISA 학습 시작
 bash dongkyu_work/misa/scripts/run_misa.sh
 ```
 
-실행 전 공식 가중치 `g_prompt.pt`, `e_prompt.pt`가 `dongkyu_work/misa/checkpoints/`에 필요합니다. 현재 **공식 바이너리 두 개를 원본 Git SHA 그대로 확보·업로드했습니다.** **두 가중치의 PyTorch CPU 로딩·SHA·shape·dtype·finite 검사까지 GitHub Actions에서 통과했습니다.** [검증 증빙](notes/CPU_VERIFICATION.md). ViT-B/16의 전체 구조 생성 및 합성 입력 Forward/Backward는 **CPU 검증 성공**했습니다([검증 증빙](notes/FORWARD_VERIFICATION.md)). **7단계에서는 가상 이미지와 소형 대체 백본으로 실제 Trainer의 DataLoader→Batch Mask→Loss→Adam optimizer 2회 업데이트 및 Task 전환을 CPU에서 검증했습니다.** [7단계 결과](notes/TRAINER_VERIFICATION.md). **8단계에서 실제 main.py·공통 runner의 5개 Task, 51회 업데이트, 20회 평가, 결과 파일 생성까지 CPU 합성 데이터로 확인**했습니다([검증 결과](notes/ENTRYPOINT_VERIFICATION.md)). 외부 **사전학습 ViT 백본 가중치 로딩**, 실제 CIFAR-100/GPU 학습 및 논문 성능 재현은 아직 미검증입니다.
+직접 `python main.py --method misa ...`로도 선택할 수 있습니다. `DATA_DIR`·`MISA_PROMPT_DIR` 환경변수로 경로를 조정합니다.
 
-공식 MISA 원본 코드는 [kangzhiq/MISA](https://github.com/kangzhiq/MISA)이고, **원본 코드는 수정하지 않았습니다**.
+## 어디에 무엇이 있나요?
+
+```text
+misa/
+├── implementation/   # 실제 MISA 모델·Trainer
+├── scripts/          # 실행 명령·CPU 검증 도구
+├── checkpoints/      # 공식 ISA Prompt 가중치
+├── original/         # 변경하지 않은 공식 소스 스냅샷
+└── notes/            # 최종 보고서와 세부 검증 기록
+```
+
+| 하고 싶은 일 | 먼저 볼 파일 |
+| --- | --- |
+| MISA 코드 이해·수정 | [implementation/README.md](implementation/README.md) |
+| 실행·검증 | [scripts/README.md](scripts/README.md) |
+| 체크포인트 확인 | [checkpoints/README.md](checkpoints/README.md) |
+| 원본 코드 대조 | [original/README.md](original/README.md) |
+| 검증 결론·근거 | [FINAL_REPORT.md](notes/FINAL_REPORT.md) · [notes/README.md](notes/README.md) |
+
+## FlyGCL과 연결되는 부분
+
+실제 알고리즘은 이 폴더에서 관리합니다. 루트의 `models/misa.py`·`methods/misa.py`는 import 연결 파일이며, 각 등록부(`models/__init__.py`, `methods/__init__.py`) 및 `configuration/config.py`에 MISA 선택·가중치 경로만 연결했습니다.
+
+원본: [kangzhiq/MISA](https://github.com/kangzhiq/MISA) · 프레임워크: [AnAppleCore/FlyGCL](https://github.com/AnAppleCore/FlyGCL)
