@@ -57,7 +57,9 @@ def base_parser():
     parser.add_argument("--lwf_teacher_on_gpu", action=argparse.BooleanOptionalAction, default=True, help="Keep the frozen LwF teacher model on GPU.")
 
     # ============= MISA configurations ============
-    parser.add_argument('--load_pt', action='store_true', default=False, help='load pretrained prompts (MISA)')
+    parser.add_argument('--load_pt', action='store_true', default=False, help='load pretrained prompts (legacy DualPrompt option)')
+    parser.add_argument('--misa_prompt_dir', type=str, default='./pretrained_prompt',
+                        help='Directory containing official MISA ISA g_prompt.pt and e_prompt.pt tensors.')
     parser.add_argument('--flyprompt_pt_path', type=str, default='./checkpoints/flyprompt_misa_prompt.pt',
                         help='Path to MISA-style pretrained FlyPrompt prompt checkpoint.')
 

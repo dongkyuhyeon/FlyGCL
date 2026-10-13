@@ -125,12 +125,18 @@ When you set `--backbone` to one of the following, `models/vit.py` will try to l
 
 ### Prompt checkpoints (MISA)
 
-`MISA` (based on `DualPrompt`) loads prompt tensors from local files when you pass `--load_pt`:
+Independent `--method misa` integration reuses the official MISA (ICLR 2025) downstream DualPrompt architecture, but automatically requires **ISA-pretrained prompts** (not `--load_pt`):
 
-- `./checkpoints/g_prompt.pt`
-- `./checkpoints/e_prompt.pt`
+- `./pretrained_prompt/g_prompt.pt`
+- `./pretrained_prompt/e_prompt.pt`
 
-Prompt checkpoints are distributed via the same links above.
+Obtain these from the [official MISA repository](https://github.com/kangzhiq/MISA/tree/main/pretrained_prompt). They are **not included in this fork**; alternatively pass `--misa_prompt_dir /path/to/pretrained_prompt`. Without them, MISA fails immediately rather than silently initializing random prompts.
+
+```bash
+bash scripts/run_misa.sh  # example only; official prompt tensors must exist first
+```
+
+The existing `--method dualprompt --load_pt` command remains supported and still loads the legacy `./checkpoints/*.pt` paths. For details and verification limits, see [MISA integration notes](dongkyu_work/misa/notes/INTEGRATION.md).
 
 ## 🚀 Quick start (FlyPrompt)
 

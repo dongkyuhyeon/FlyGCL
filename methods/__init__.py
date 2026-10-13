@@ -1,5 +1,6 @@
 from .codaprompt import CodaPrompt
 from .dualprompt import DualPrompt
+from .misa import MISA as MISATrainer
 from .flyprompt import FlyPrompt
 from .l2p import L2P
 from .mvp import MVP
@@ -15,6 +16,7 @@ from .seq_baselines import LinearProbe, SeqFinetune, SeqFinetuneSmallLR
 METHODS = {
     "codaprompt": CodaPrompt,
     "dualprompt": DualPrompt,
+    "misa": MISATrainer,
     "flyprompt": FlyPrompt,
     "flyadapter": FlyPrompt,
     "flylora": FlyPrompt,
