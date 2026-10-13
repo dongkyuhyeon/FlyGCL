@@ -31,7 +31,7 @@ Source snapshot: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`
 - `dongkyu_work/misa/checkpoints/g_prompt.pt` — official blob SHA `b21ade5ab36b97346a3e7a5b54e9ef6aaaffed53` (62,317 bytes).
 - `dongkyu_work/misa/checkpoints/e_prompt.pt` — official blob SHA `3b88950a0cabbdd533357fb84f83445fd1f47463` (1,844,077 bytes).
 - Upstream: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`; binary contents are referenced by **exact original Git object SHA**.
-- MISA ViT-B/16 implementation expected shapes: g `(1,20,768)`, e `(10,60,768)`; original g tensor pickle metadata statically confirmed. Actual CPU PyTorch load of both tensors has not been executed here.
+- **CPU loading verified (2026-10-13):** both tensors successfully loaded via PyTorch 2.5.1+cpu; g `(1,20,768)`, e `(10,60,768)`, both float32 and finite. [Proof and verbatim log](CPU_VERIFICATION.md).
 - Run `python dongkyu_work/misa/scripts/verify_prompts.py` in an environment with PyTorch installed to validate **the real loaded tensor contents, dtype and shapes**; this script performs no training.
 - See [checkpoint verification details](../checkpoints/README.md). `--method misa` loads these weights by default, so `--load_pt` is not needed. Optional override: `--misa_prompt_dir`.
 
@@ -51,7 +51,7 @@ python main.py --method misa --dataset cifar100 --n_tasks 5 --n 50 --m 10 \
 - **Not done:** importing the *full* FlyGCL runtime with actual ViT backbone and official tensors; no dataset run, no GPU training, no numerical equivalence/reproduction claim.
 - **Not implemented:** ISA/FAM pretraining integration and generation of new official initial-session prompt checkpoints. Reuse of provided ISA pretrained prompt tensors is the downstream comparison path.
 
-Phase 2a goal: ready-to-register model/trainer, with checkpoint acquisition completed; CPU tensor load and full runtime validation remain outstanding.
+Phase 2a goal: ready-to-register model/trainer; official checkpoint acquisition and CPU tensor loading have passed. Full ViT-model instantiation and runtime integration validation remain outstanding.
 
 ## Directory organization (post-reorganization)
 
