@@ -127,16 +127,16 @@ When you set `--backbone` to one of the following, `models/vit.py` will try to l
 
 Independent `--method misa` integration reuses the official MISA (ICLR 2025) downstream DualPrompt architecture, but automatically requires **ISA-pretrained prompts** (not `--load_pt`):
 
-- `./pretrained_prompt/g_prompt.pt`
-- `./pretrained_prompt/e_prompt.pt`
+- `./dongkyu_work/misa/checkpoints/g_prompt.pt`
+- `./dongkyu_work/misa/checkpoints/e_prompt.pt`
 
 Obtain these from the [official MISA repository](https://github.com/kangzhiq/MISA/tree/main/pretrained_prompt). They are **not included in this fork**; alternatively pass `--misa_prompt_dir /path/to/pretrained_prompt`. Without them, MISA fails immediately rather than silently initializing random prompts.
 
 ```bash
-bash scripts/run_misa.sh  # example only; official prompt tensors must exist first
+bash dongkyu_work/misa/scripts/run_misa.sh  # example only; official prompt tensors must exist first
 ```
 
-The existing `--method dualprompt --load_pt` command remains supported and still loads the legacy `./checkpoints/*.pt` paths. For details and verification limits, see [MISA integration notes](dongkyu_work/misa/notes/INTEGRATION.md).
+The existing `--method dualprompt --load_pt` command remains supported and still loads the legacy `./checkpoints/*.pt` paths. For all MISA source code, launcher, documentation and verification limits, see [the MISA workspace](dongkyu_work/misa/README.md).
 
 ## 🚀 Quick start (FlyPrompt)
 

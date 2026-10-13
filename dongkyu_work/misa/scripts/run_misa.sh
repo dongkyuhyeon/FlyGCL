@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Example only. Requires official MISA pretrained ISA prompt tensors.
 set -euo pipefail
-DATA_DIR="${DATA_DIR:-./data}"
-MISA_PROMPT_DIR="${MISA_PROMPT_DIR:-./pretrained_prompt}"
+DATA_DIR="${DATA_DIR:-./data/CIFAR}"
+MISA_PROMPT_DIR="${MISA_PROMPT_DIR:-./dongkyu_work/misa/checkpoints}"
 python main.py \
   --method misa --dataset cifar100 --data_dir "$DATA_DIR" \
   --n_tasks 5 --n 50 --m 10 --rnd_NM \

@@ -58,7 +58,7 @@ def base_parser():
 
     # ============= MISA configurations ============
     parser.add_argument('--load_pt', action='store_true', default=False, help='load pretrained prompts (legacy DualPrompt option)')
-    parser.add_argument('--misa_prompt_dir', type=str, default='./pretrained_prompt',
+    parser.add_argument('--misa_prompt_dir', type=str, default='./dongkyu_work/misa/checkpoints',
                         help='Directory containing official MISA ISA g_prompt.pt and e_prompt.pt tensors.')
     parser.add_argument('--flyprompt_pt_path', type=str, default='./checkpoints/flyprompt_misa_prompt.pt',
                         help='Path to MISA-style pretrained FlyPrompt prompt checkpoint.')

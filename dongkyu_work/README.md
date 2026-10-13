@@ -17,3 +17,8 @@
 
 **FlyGCL 원본:** https://github.com/AnAppleCore/FlyGCL
 
+
+## 개인 작업 탐색
+
+- [MISA (ICLR 2025) 전체 작업 모음](misa/README.md) — 공식 코드, 독립 모델·Trainer 구현, 실행 스크립트, Prompt 경로와 비교 분석 문서를 한 곳에서 관리합니다.
+- MISA 이외의 FlyGCL 기존 비교군 코드는 원래 디렉터리를 유지합니다.
