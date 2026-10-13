@@ -6,8 +6,7 @@
 
 - MISA (ICLR 2025) 공식 저장소와 FlyGCL 기존 구현 차이 분석
 - MISA를 FlyGCL의 Si-Blurry 공통 데이터 스트림 및 평가 프로토콜에 맞게 통합 준비
-- 구현 변경 사항, 점검 사항 및 참고 자료 기록
-
+- 공식코드 기반으로 FlyGCL코드안에 통합해서 같은 프로토콜에서 실행 가능하게 준비 
 ## 원칙
 
 - 원본 FlyGCL 구조(`methods/`, `models/`, `configuration/`, `scripts/`)는 필요한 경우에만 수정합니다.
@@ -17,3 +16,4 @@
 **MISA 공식 코드:** https://github.com/kangzhiq/MISA
 
 **FlyGCL 원본:** https://github.com/AnAppleCore/FlyGCL
+
