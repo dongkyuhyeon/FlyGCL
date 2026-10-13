@@ -1,4 +1,4 @@
-> **현재 상태:** MISA 독립 모델·Trainer가 구현되어 `--method misa`로 등록되어 있습니다. 실제 구현은 [../implementation/](../implementation/)에서 관리하며 실행 예시는 [../scripts/run_misa.sh](../scripts/run_misa.sh)에 있습니다. 공식 Prompt 가중치 부재로 전체 실행 성공은 미검증입니다. 아래 기록은 통합 **전** 분석을 포함합니다.
+> **현재 상태:** MISA 독립 모델·Trainer가 구현되어 `--method misa`로 등록되어 있습니다. 실제 구현은 [../implementation/](../implementation/)에서 관리하며 실행 예시는 [../scripts/run_misa.sh](../scripts/run_misa.sh)에 있습니다. 공식 Prompt 가중치 2개는 확보하여 업로드했습니다. 다만 실제 torch.load/전체 실행 성공은 미검증입니다. 아래 기록은 통합 **전** 분석을 포함합니다.
 
 # MISA 통합 작업 기록
 

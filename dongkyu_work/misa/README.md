@@ -11,7 +11,8 @@ MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결�
 | [implementation/model.py](implementation/model.py) | FlyGCL에서 쓰는 MISA 모델의 실제 구현 |
 | [implementation/trainer.py](implementation/trainer.py) | FlyGCL에서 쓰는 MISA Trainer의 실제 구현 |
 | [scripts/run_misa.sh](scripts/run_misa.sh) | MISA 실행 설정 예시 |
-| [checkpoints/](checkpoints/) | 공식 사전학습 Prompt 파일을 로컬에 두는 자리 (Git에는 미포함) |
+| [scripts/verify_prompts.py](scripts/verify_prompts.py) | 공식 SHA 및 tensor dtype/shape CPU 로딩 검증 스크립트 |
+| [checkpoints/](checkpoints/) | 공식 ISA Prompt 가중치 2개가 Git에 저장된 폴더 및 검증 안내 |
 | [notes/MISA_vs_FlyGCL.md](notes/MISA_vs_FlyGCL.md) | 공식 MISA와 FlyGCL의 코드 차이 |
 | [notes/INTEGRATION.md](notes/INTEGRATION.md) | 통합 상세 설명·범위·검증 한계 |
 
@@ -32,6 +33,6 @@ MISA (ICLR 2025) 비교군을 FlyGCL의 Si-Blurry 공통 프로토콜에 연결�
 bash dongkyu_work/misa/scripts/run_misa.sh
 ```
 
-실행 전 공식 가중치 `g_prompt.pt`, `e_prompt.pt`가 `dongkyu_work/misa/checkpoints/`에 필요합니다. 현재 **두 파일은 확보/검증되지 않았고**, 실제 전체 실행 성공이나 논문 성능 재현은 검증하지 않았습니다.
+실행 전 공식 가중치 `g_prompt.pt`, `e_prompt.pt`가 `dongkyu_work/misa/checkpoints/`에 필요합니다. 현재 **공식 바이너리 두 개를 원본 Git SHA 그대로 확보·업로드했습니다.** 다만 PyTorch 실제 로딩/모델 생성/전체 실행과 논문 성능 재현은 아직 검증하지 않았습니다.
 
 공식 MISA 원본 코드는 [kangzhiq/MISA](https://github.com/kangzhiq/MISA)이고, **원본 코드는 수정하지 않았습니다**.

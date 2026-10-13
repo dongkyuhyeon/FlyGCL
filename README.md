@@ -130,7 +130,7 @@ Independent `--method misa` integration reuses the official MISA (ICLR 2025) dow
 - `./dongkyu_work/misa/checkpoints/g_prompt.pt`
 - `./dongkyu_work/misa/checkpoints/e_prompt.pt`
 
-Obtain these from the [official MISA repository](https://github.com/kangzhiq/MISA/tree/main/pretrained_prompt). They are **not included in this fork**; alternatively pass `--misa_prompt_dir /path/to/pretrained_prompt`. Without them, MISA fails immediately rather than silently initializing random prompts.
+Obtain these from the [official MISA repository](https://github.com/kangzhiq/MISA/tree/main/pretrained_prompt). They are **committed in this fork under `dongkyu_work/misa/checkpoints/`** (original upstream Git blob SHA preserved); alternatively pass `--misa_prompt_dir /path/to/pretrained_prompt`. Without them, MISA fails immediately rather than silently initializing random prompts.
 
 ```bash
 bash dongkyu_work/misa/scripts/run_misa.sh  # example only; official prompt tensors must exist first

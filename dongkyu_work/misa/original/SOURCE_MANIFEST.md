@@ -21,3 +21,9 @@
 2. `MISA/` 하위 코드는 소스 검증·포팅을 위한 참조본입니다. 원본의 `methods/`, `models/`를 프로젝트 루트에 직접 덮어쓰면 충돌할 수 있습니다.
 3. 원본 [LICENSE](./MISA/LICENSE)는 MIT 라이선스이며 저작권/허가 고지를 유지했습니다.
 4. 실제 GPU 학습 및 원 논문 재현 검증은 **진행하지 않았습니다**.
+
+## 후속 4단계 — 공식 Prompt 바이너리 확보 (2026-10-13)
+
+1단계에서 `original/MISA/`에 복사하지 않았던 두 체크포인트를 후속 단계에서 **`dongkyu_work/misa/checkpoints/`에 공식 Git blob SHA 그대로** 등록했습니다. 위의 '제외' 내역은 **원본 스냅샷 폴더에서만 제외했다는 당시의 기록**입니다. 이미지 `overview.png`는 여전히 별도 보관하지 않습니다.
+
+[체크포인트 검증 문서](../checkpoints/README.md) / [검증 스크립트](../scripts/verify_prompts.py).

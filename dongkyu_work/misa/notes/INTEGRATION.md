@@ -16,7 +16,7 @@ Source snapshot: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`
 | `dongkyu_work/misa/scripts/run_misa.sh` | Example execution config (not executed) |
 
 | `models/misa.py`, `methods/misa.py` | Thin import-only compatibility shims; required for the root FlyGCL registries |
-| `dongkyu_work/misa/checkpoints/README.md` | Documents where official prompt tensors should be placed; no weights are committed |
+| `dongkyu_work/misa/checkpoints/` | Official g/e prompt binaries committed unchanged by upstream blob SHA; CPU shape verifier available |
 
 ## Reused vs modified
 
@@ -26,13 +26,14 @@ Source snapshot: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`
 - Disable optional unrelated RPFC/EMA/MePo features to avoid altering the MISA baseline.
 - Prompt index selection implementation originates from FlyGCL's repaired global-slice indexing (vs the original upstream implementation). Therefore not claimed to be byte-for-byte or numerically identical to upstream.
 
-## Official pretrained prompts REQUIRED before actual run
+## Official ISA pretrained prompts: uploaded (2026-10-13)
 
-The `.pt` files were **not copied into Git** in Phase 1 (see [source manifest](../original/SOURCE_MANIFEST.md)). Obtain the two official binary files from:
-- https://github.com/kangzhiq/MISA/blob/72e7c960c73eceb1e3f63950d18ad6baff52b560/pretrained_prompt/g_prompt.pt
-- https://github.com/kangzhiq/MISA/blob/72e7c960c73eceb1e3f63950d18ad6baff52b560/pretrained_prompt/e_prompt.pt
-
-Place them in `./dongkyu_work/misa/checkpoints/g_prompt.pt` and `./dongkyu_work/misa/checkpoints/e_prompt.pt` or pass `--misa_prompt_dir /path/to/pretrained_prompt`. `--method misa` **always attempts to load them**: it refuses to train a falsely labeled MISA model from random prompts. The supplied tensors must match expected model shapes. MISA expects fixed 10-slot e-prompt pool and supports task counts dividing 10.
+- `dongkyu_work/misa/checkpoints/g_prompt.pt` — official blob SHA `b21ade5ab36b97346a3e7a5b54e9ef6aaaffed53` (62,317 bytes).
+- `dongkyu_work/misa/checkpoints/e_prompt.pt` — official blob SHA `3b88950a0cabbdd533357fb84f83445fd1f47463` (1,844,077 bytes).
+- Upstream: `kangzhiq/MISA@72e7c960c73eceb1e3f63950d18ad6baff52b560`; binary contents are referenced by **exact original Git object SHA**.
+- MISA ViT-B/16 implementation expected shapes: g `(1,20,768)`, e `(10,60,768)`; original g tensor pickle metadata statically confirmed. Actual CPU PyTorch load of both tensors has not been executed here.
+- Run `python dongkyu_work/misa/scripts/verify_prompts.py` in an environment with PyTorch installed to validate **the real loaded tensor contents, dtype and shapes**; this script performs no training.
+- See [checkpoint verification details](../checkpoints/README.md). `--method misa` loads these weights by default, so `--load_pt` is not needed. Optional override: `--misa_prompt_dir`.
 
 ## Example: not run
 
@@ -50,7 +51,7 @@ python main.py --method misa --dataset cifar100 --n_tasks 5 --n 50 --m 10 \
 - **Not done:** importing the *full* FlyGCL runtime with actual ViT backbone and official tensors; no dataset run, no GPU training, no numerical equivalence/reproduction claim.
 - **Not implemented:** ISA/FAM pretraining integration and generation of new official initial-session prompt checkpoints. Reuse of provided ISA pretrained prompt tensors is the downstream comparison path.
 
-Phase 2a goal: ready-to-register model/trainer, with remaining checkpoint acquisition and full runtime validation explicitly tracked.
+Phase 2a goal: ready-to-register model/trainer, with checkpoint acquisition completed; CPU tensor load and full runtime validation remain outstanding.
 
 ## Directory organization (post-reorganization)
 
