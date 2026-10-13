@@ -183,9 +183,56 @@ def test_shared_protocol_source():
     print("PASS protocol wiring: shared sampler, transforms, evaluation cadence, metrics")
 
 
+
+def test_deterministic_si_blurry_sampler():
+    """Run the REAL shared FlyGCL sampler on a tiny synthetic class stream."""
+    import logging
+    from typing import Optional, Sized
+    from torch.utils.data.distributed import DistributedSampler
+    import torch.distributed as dist
+
+    ns = {"torch": torch, "dist": dist, "Optional": Optional, "Sized": Sized,
+          "DistributedSampler": DistributedSampler, "logger": logging.getLogger(__name__)}
+    Sampler = extract_class("utils/onlinesampler.py", "OnlineSampler", ns)
+    TestSampler = extract_class("utils/onlinesampler.py", "OnlineTestSampler", ns)
+
+    class MiniDataset:
+        classes = list(range(10))
+        targets = [i for i in range(10) for _ in range(10)]
+
+        def __len__(self):
+            return len(self.targets)
+
+    data = MiniDataset()
+    # Both algorithms pass the same inputs to this shared sampler class via
+    # _Trainer.setup_distributed_dataset; check its actual deterministic output.
+    misa = Sampler(data, 5, 10, 50, 1993, 0, True)
+    flyprompt = Sampler(data, 5, 10, 50, 1993, 0, True)
+    other_seed = Sampler(data, 5, 10, 50, 2027, 0, True)
+    task_sequences = []
+    different_sequences = []
+    for task in range(5):
+        misa.set_task(task)
+        flyprompt.set_task(task)
+        other_seed.set_task(task)
+        a, b, c = list(misa), list(flyprompt), list(other_seed)
+        assert a == b, f"Si-Blurry sampler mismatch with equal seed at task {task}"
+        task_sequences.append(a)
+        different_sequences.append(c)
+    assert task_sequences != different_sequences, "Sanity: different seeds should differ"
+
+    seen = [0, 1, 4]
+    train_eval = TestSampler(data, seen)
+    indices = list(train_eval)
+    assert indices and all(data.targets[i] in seen for i in indices)
+    assert len(indices) == sum(label in seen for label in data.targets)
+    print("PASS Si-Blurry actual sampler: 5 task streams identical for equal seeds, test filter")
+
+
 if __name__ == "__main__":
     test_prompt_matches_upstream()
     test_loss_and_training_mask()
     test_misa_raw_logit_evaluation()
     test_shared_protocol_source()
+    test_deterministic_si_blurry_sampler()
     print("PASS: MISA released-algorithm parity and FlyGCL common protocol checks")
