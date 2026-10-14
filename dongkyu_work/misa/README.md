@@ -4,6 +4,8 @@
 
 **현재 상태:** 통합 및 CPU 연결 검증 **완료**. 실제 CIFAR-100 + 사전학습 ViT GPU 학습·성능 재현은 수행하지 않았습니다. → [검증 결과](notes/FINAL_REPORT.md)
 
+**평가 정책 (2026-10-14):** 관측 클래스만 예측하도록 FlyGCL seen-class mask를 적용합니다. 공식 MISA raw-logit 평가와의 차이 및 변경 검증은 [평가 조건 통일](notes/EVALUATION_ALIGNMENT.md)에 기록합니다.
+
 ## 실행
 
 Python 3.10 및 [FlyGCL 의존성](../../requirements.txt), 실제 데이터·ViT-B/16 백본 가중치를 준비한 후 저장소 루트에서:

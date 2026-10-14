@@ -1,5 +1,7 @@
 # 7단계: MISA Trainer 연동 CPU 검증
 
+> 이 문서는 2026-10-13 변경 전 실행 기록입니다. 2026-10-14부터 MISA 평가에 FlyGCL seen-class mask를 적용합니다. 현재 변경 검증은 [EVALUATION_ALIGNMENT.md](EVALUATION_ALIGNMENT.md)를 참조하십시오. 과거 raw-logit PASS는 현재 정책의 검증 근거가 아닙니다.
+
 - **일시:** 2026-10-13
 - **상태:** **PASS / GitHub Actions SUCCESS**
 - **최종 CI:** https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38364210845

@@ -70,7 +70,7 @@ def main():
     model = (ROOT / "dongkyu_work/misa/implementation/model.py").read_text()
     trainer = (ROOT / "dongkyu_work/misa/implementation/trainer.py").read_text()
     assert "self.e_prompt = MISAExpertPrompt(self.e_prompt)" in model
-    assert "logits = self.model(x)  # raw logits, no seen-class mask" in trainer
+    assert "logits = logits + self.mask" in trainer
     assert '"misa": MISA' in (ROOT / "models/__init__.py").read_text()
     assert '"misa": MISATrainer' in (ROOT / "methods/__init__.py").read_text()
     for shim, import_line in [

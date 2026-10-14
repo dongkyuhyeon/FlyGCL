@@ -1,5 +1,7 @@
 # 8단계: MISA 실행 스크립트·main.py 전체 경로 검증 (2026-10-13)
 
+> 이 문서는 2026-10-13 변경 전 실행 기록입니다. 2026-10-14부터 MISA 평가에 FlyGCL seen-class mask를 적용합니다. 현재 변경 검증은 [EVALUATION_ALIGNMENT.md](EVALUATION_ALIGNMENT.md)를 참조하십시오. 과거 raw-logit PASS는 현재 정책의 검증 근거가 아닙니다.
+
 ## 검증 결과: PASS
 
 - **최종 CI 증빙:** https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38365379698

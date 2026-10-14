@@ -1,5 +1,7 @@
 # MISA 공식 알고리즘 및 Si-Blurry 공정 비교 검증 결과
 
+> 이 문서는 2026-10-13 변경 전 실행 기록입니다. 2026-10-14부터 MISA 평가에 FlyGCL seen-class mask를 적용합니다. 현재 변경 검증은 [EVALUATION_ALIGNMENT.md](EVALUATION_ALIGNMENT.md)를 참조하십시오. 과거 raw-logit PASS는 현재 정책의 검증 근거가 아닙니다.
+
 검증일: 2026-10-13 · 방법: GitHub Actions **CPU-only**, `torch==2.5.1+cpu`, `numpy==1.26.4`.
 
 - **GitHub Actions:** https://github.com/dongkyuhyeon/FlyGCL/actions/runs/38357870025
@@ -28,7 +30,7 @@ PASS Si-Blurry actual sampler: 5 task streams identical for equal seeds, test fi
 
 ## 공정 비교 해석에서 유의할 점
 
-동일 데이터 흐름과 평가 지표가 보장된다는 것은 **분류기 출력 자체가 동일 규칙으로 후처리됨을 뜻하지 않습니다.** 원본 MISA는 평가에서 **raw logits**를 사용하지만 FlyPrompt는 관측 클래스 마스크를 적용합니다. 원본 충실도를 우선하여 그대로 두었으며, 이 차이가 결과에 미치는 영향은 별도 ablation 없이 판정할 수 없습니다.
+당시에는 공식 MISA의 raw-logit 평가를 유지했습니다. 이 정책은 2026-10-14에 공통 seen-class mask로 변경되었으며, 아래 과거 CI 결과와 구분해야 합니다.
 
 ## 아직 미검증인 범위
 

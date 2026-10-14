@@ -15,3 +15,5 @@
 | **과거 분석** | [MISA_vs_FlyGCL.md](MISA_vs_FlyGCL.md) | 통합 **이전** 조사 기록 |
 
 **현재 구현 상태는 [프로젝트 README](../README.md)·[최종 결과](FINAL_REPORT.md)를 기준**으로 합니다. 각 검증 로그는 수행 당시의 상태를 담고 있습니다.
+
+- [평가 조건 통일 (2026-10-14)](EVALUATION_ALIGNMENT.md): 공통 seen-class mask 적용 및 회귀 검증.

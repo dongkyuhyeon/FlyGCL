@@ -13,6 +13,8 @@
 
 ## 검증 요약
 
+**2026-10-14 변경:** 평가에 공통 seen-class mask를 적용합니다. 아래 기존 PASS는 2026-10-13 실행 이력입니다. 변경 후 검증 범위는 [EVALUATION_ALIGNMENT.md](EVALUATION_ALIGNMENT.md)를 참조하십시오.
+
 | 검증 범위 | 근거 |
 | --- | --- |
 | 공식 Prompt SHA·CPU 로딩 | [PASS](CPU_VERIFICATION.md) |

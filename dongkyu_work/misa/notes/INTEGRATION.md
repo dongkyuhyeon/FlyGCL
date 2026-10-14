@@ -15,7 +15,7 @@ main.py --method misa
 | --- | --- |
 | Si-Blurry Sampler·DataLoader·Task 루프·Optimizer | 공식 G/E Prompt 구조·ISA 가중치 |
 | ViT-B/16·DualPrompt 학습·결과 저장 | 공식 MISA의 Prompt 선택 인덱스 |
-| 평가 주기·기본 지표 | 공식 MISA raw-logit 평가 |
+| 평가 주기·기본 지표·seen-class mask | 공식 MISA의 raw-logit 평가를 공통 비교 조건으로 변경 |
 
 MISA 선택에 필요한 루트 변경은 import 파일 두 개, 등록부(`models/__init__.py`, `methods/__init__.py`), `configuration/config.py`의 경로 옵션입니다. 기존 공통 학습 코드는 그대로 둡니다.
 

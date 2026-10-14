@@ -116,18 +116,18 @@ def test_loss_and_training_mask():
     print("PASS training mask/loss: upstream MISA, FlyGCL DualPrompt and FlyPrompt")
 
 
-def test_misa_raw_logit_evaluation():
+def test_misa_seen_class_evaluation():
     evaluator = extract_method(
         "dongkyu_work/misa/implementation/trainer.py", "MISA", "online_evaluate"
     )
+    reference = extract_method("methods/dualprompt.py", "DualPrompt", "online_evaluate")
 
     class Dummy:
         def eval(self):
             return self
 
         def __call__(self, x):
-            # Unseen classes 2/3 are deliberately strongest: raw-logit
-            # MISA accuracy must differ from a seen-class-masked evaluator.
+            # Unseen classes deliberately outrank the correct seen classes.
             return torch.tensor([[3.0, 1.0, 9.0, 8.0],
                                  [1.0, 4.0, 3.0, 10.0]], dtype=torch.float32)
 
@@ -135,16 +135,34 @@ def test_misa_raw_logit_evaluation():
         return (torch.bincount(y, minlength=4),
                 torch.bincount(y[y == pred], minlength=4))
 
-    mock = SimpleNamespace(n_classes=4, model=Dummy(), device="cpu",
-                           use_amp=False, topk=1, criterion=nn.CrossEntropyLoss(),
-                           exposed_classes=[6, 8], _interpret_pred=counts,
-                           mask=torch.tensor([0, 0, -torch.inf, -torch.inf]))
-    loader = [(torch.zeros(2, 3), torch.tensor([6, 8]))]
-    out = evaluator(mock, loader)
-    assert out["avg_acc"] == 0.0, "MISA evaluator must use unmasked raw logits"
-    assert set(out.keys()) == {"avg_loss", "avg_acc", "cls_acc"}
-    assert len(out["cls_acc"]) == mock.n_classes
-    print("PASS MISA evaluation: raw logits, same shared metric schema")
+    for exposed, topk, expected_acc in (
+        ([6, 8], 1, 1.0),
+        ([6, 8], 2, 1.0),
+        ([6, 8, 2], 1, 0.5),
+        ([6, 8, 2, 3], 1, 0.0),
+    ):
+        mask = torch.full((4,), -torch.inf)
+        mask[:len(exposed)] = 0
+        model = Dummy()
+        mock = SimpleNamespace(n_classes=4, model=model, model_without_ddp=model,
+                               device="cpu", use_amp=False, topk=topk,
+                               criterion=nn.CrossEntropyLoss(),
+                               exposed_classes=exposed, _interpret_pred=counts, mask=mask)
+        def loader():
+            # FlyGCL's reference mutates label tensors; give each call fresh labels.
+            return [(torch.zeros(2, 3), torch.tensor([6, 8]))]
+        out = evaluator(mock, loader())
+        expected = reference(mock, loader())
+        assert out["avg_acc"] == expected_acc
+        assert set(out) == {"avg_loss", "avg_acc", "cls_acc"}
+        for key in out:
+            torch.testing.assert_close(torch.tensor(out[key]), torch.tensor(expected[key]),
+                                       rtol=0, atol=0)
+        assert torch.isfinite(torch.tensor(out["avg_loss"]))
+        if len(exposed) == 2:
+            loss = F.cross_entropy(model(None)[:, :2], torch.tensor([0, 1])).item()
+            assert out["avg_loss"] == loss, "Mask must apply before loss as well as prediction"
+    print("PASS MISA evaluation: exact FlyGCL metrics for 2/3/4 seen classes and top-k")
 
 
 def test_shared_protocol_source():
@@ -176,8 +194,8 @@ def test_shared_protocol_source():
     assert "--batchsize 64 --online_iter 3" in runner
     assert "--opt_name adam --sched_name default" in runner
     assert '--step_num' in model  # guard against replacing task boundary semantics
-    assert "logit + self.mask" in fly  # algorithm-specific eval behavior
-    assert "logits = self.model(x)" in trainer and "logits + self.mask" not in trainer
+    assert "logit + self.mask" in fly  # common seen-class evaluation policy
+    assert "logits = self.model(x)" in trainer and "logits + self.mask" in trainer
     # For documented CIFAR100 shared protocol: the core sampler is one common import.
     assert "from utils.onlinesampler import OnlineSampler, OnlineTestSampler" in root
     print("PASS protocol wiring: shared sampler, transforms, evaluation cadence, metrics")
@@ -232,7 +250,7 @@ def test_deterministic_si_blurry_sampler():
 if __name__ == "__main__":
     test_prompt_matches_upstream()
     test_loss_and_training_mask()
-    test_misa_raw_logit_evaluation()
+    test_misa_seen_class_evaluation()
     test_shared_protocol_source()
     test_deterministic_si_blurry_sampler()
-    print("PASS: MISA released-algorithm parity and FlyGCL common protocol checks")
+    print("PASS: MISA prompt/training parity and FlyGCL common evaluation protocol checks")

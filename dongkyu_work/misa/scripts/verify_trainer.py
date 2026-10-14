@@ -4,7 +4,7 @@ Exercises REAL:
   config parser -> METHODS['misa'] -> shared _Trainer setup_distributed_dataset
   -> shared OnlineSampler/DataLoader -> MISA online_step + batch logit mask
   -> MISA Prompt/model loss -> Backward -> Adam optimizer step
-  -> OnlineTestSampler -> MISA raw-logit evaluation -> task boundary + next update.
+  -> OnlineTestSampler -> MISA seen-class-masked evaluation -> task boundary + next update.
 
 Uses an intentionally small 5-block substitute backbone (feature dim=768)
 to avoid external ViT checkpoint downloads and keep CPU CI fast. Stage 6
@@ -215,7 +215,7 @@ def main():
             assert math.isfinite(test_result["avg_loss"])
             assert 0 <= test_result["avg_acc"] <= 1
             assert len(test_result["cls_acc"]) == 100
-            print("PASS evaluation: shared exposed-class test sampler + MISA raw-logit metrics", flush=True)
+            print("PASS evaluation: shared exposed-class test sampler + MISA seen-class-masked metrics", flush=True)
 
             trainer.online_after_task(0)
             assert trainer.model_without_ddp.task_count == 1

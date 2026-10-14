@@ -1,9 +1,9 @@
 """FlyGCL MISA downstream trainer.
 
-The official MISA (ICLR 2025) downstream training uses DualPrompt's
-batch-wise class mask, but evaluates raw logits without the seen-class
-mask. This trainer preserves that distinction, while using the shared
-FlyGCL Si-Blurry stream, optimization, and result logging.
+MISA retains the official downstream training and ISA prompts. Evaluation
+applies FlyGCL's seen-class mask before loss and prediction for a common
+comparison protocol. This deliberately differs from official MISA raw-logit
+evaluation; the vendored official source remains unchanged.
 """
 
 import torch
@@ -15,8 +15,8 @@ class MISA(DualPrompt):
     """MISA downstream update and evaluation on the FlyGCL protocol."""
 
     def online_evaluate(self, test_loader, task_id=None, end=False):
-        # Unlike the generic FlyGCL DualPrompt evaluator, the official
-        # MISA methods/dualprompt.py:online_evaluate does NOT add self.mask.
+        # Match FlyGCL DualPrompt evaluation: exclude unseen output classes
+        # before computing both loss and predictions.
         total_correct, total_num_data, total_loss = 0.0, 0.0, 0.0
         correct_l = torch.zeros(self.n_classes)
         num_data_l = torch.zeros(self.n_classes)
@@ -31,7 +31,8 @@ class MISA(DualPrompt):
                 x = x.to(self.device)
                 y = y.to(self.device)
                 with torch.cuda.amp.autocast(enabled=self.use_amp):
-                    logits = self.model(x)  # raw logits, no seen-class mask
+                    logits = self.model(x)
+                    logits = logits + self.mask
                     loss = self.criterion(logits, y)
 
                 predictions = logits.argmax(dim=-1)
