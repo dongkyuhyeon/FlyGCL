@@ -6,6 +6,7 @@
 
 | 프로젝트 | 목적 | 바로가기 |
 | --- | --- | --- |
+| **[SinglePrompt (CVPR Findings 2026)](singleprompt/README.md)** | 공식 코드 분석·원본 보존 (1단계 완료) | [분석](singleprompt/notes/SOURCE_AUDIT.md) · [원본](singleprompt/original/README.md) |
 | **[MISA (ICLR 2025)](misa/README.md)** | 공식 MISA를 FlyGCL의 `--method misa` 비교군으로 통합 | [시작 안내](misa/README.md) · [최종 검증](misa/notes/FINAL_REPORT.md) |
 
 ## 관련 연구 조사
