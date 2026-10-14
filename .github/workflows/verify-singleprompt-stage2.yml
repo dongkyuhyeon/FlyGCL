@@ -4,7 +4,8 @@ on:
     branches: [feature/singleprompt-stage2]
     paths:
       - '.github/workflows/verify-singleprompt-stage2.yml'
-      - 'dongkyu_work/singleprompt/**'
+      - 'dongkyu_work/singleprompt/implementation/**'
+      - 'dongkyu_work/singleprompt/scripts/verify_model.py'
   workflow_dispatch:
 
 permissions:
