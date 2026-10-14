@@ -26,4 +26,4 @@ jobs:
       - name: Check model syntax and upstream-output parity
         run: |
           python -m py_compile dongkyu_work/singleprompt/implementation/model.py dongkyu_work/singleprompt/scripts/verify_model.py
-          python dongkyu_work/singleprompt/scripts/verify_model.py
+          PYTHONPATH=. python -m dongkyu_work.singleprompt.scripts.verify_model
