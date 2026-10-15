@@ -1,6 +1,7 @@
 from .codaprompt import CodaPrompt
 from .dualprompt import DualPrompt
 from .misa import MISA
+from .singleprompt import SinglePrompt
 from .flyprompt import FlyPrompt
 from .flyprompt_variants import FlyAdapter, FlyLoRA
 from .l2p import L2P
@@ -17,6 +18,7 @@ MODELS = {
     "codaprompt": CodaPrompt,
     "dualprompt": DualPrompt,
     "misa": MISA,
+    "singleprompt": SinglePrompt,
     "flyprompt": FlyPrompt,
     "flyadapter": FlyAdapter,
     "flylora": FlyLoRA,
