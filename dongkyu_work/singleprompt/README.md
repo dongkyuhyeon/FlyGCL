@@ -1,34 +1,51 @@
 # SinglePrompt on FlyGCL
 
-**상태: 2단계 모델 구현 및 CPU 공식 동작 대조 완료.**  
-**미구현:** FlyGCL `--method singleprompt` 등록과 Trainer/Si-Blurry 데이터 스트림 연결 (3단계 예정). GPU/CIFAR-100 정확도 실험도 아직 수행하지 않았습니다.
+**현재 상태: 3단계 — 모델/공통 Trainer/Si-Blurry/CLI 통합 완료. CPU 통합 테스트 PASS.**  
+실제 CIFAR-100 GPU 실험과 논문 성능 재현은 아직 수행하지 않았습니다.
 
 - 논문: *Is Prompt Selection Necessary for Task-Free Online Continual Learning?* (CVPR Findings 2026)
 - [공식 GitHub](https://github.com/efficient-learning-lab/SinglePrompt)
-- [공식 원본 스냅샷](original/README.md) · [SHA 파일 목록](original/SOURCE_MANIFEST.md)
-- [1단계 알고리즘 분석](notes/SOURCE_AUDIT.md)
-- [2단계 CPU 검증 결과 및 한계](notes/STAGE2_VERIFICATION.md)
+- [공식 원본 고정 스냅샷](original/README.md) · [SHA 파일 목록](original/SOURCE_MANIFEST.md)
+- [원본 알고리즘 분석](notes/SOURCE_AUDIT.md)
+- [2단계 모델 CPU 검증](notes/STAGE2_VERIFICATION.md)
+- **[3단계 CLI/Trainer CPU 검증](notes/STAGE3_VERIFICATION.md)**
 
-## 단계 2에서 추가한 파일
+## 실행
 
-| 경로 | 내용 |
+FlyGCL 의존성과 CIFAR-100 데이터, ImageNet-21K 사전학습 ViT-B/16 가중치를 준비한 뒤 저장소 루트에서:
+
+```bash
+bash dongkyu_work/singleprompt/scripts/run_singleprompt.sh
+```
+
+위 스크립트는 `python main.py --method singleprompt`로 공통 Si-Blurry 흐름을 시작합니다.
+
+- 기본: CIFAR-100, 5 Task, N=50/M=10, batch=64, `online_iter=3`, Adam LR 0.005, no replay, seed 1.
+- Prefix Prompt: layers 0–4, length 20. Router 또는 추가 Expert 없음.
+- 학습: **현재 배치 클래스만** finite logit으로 두는 공식 batch-class mask.
+- 평가 기본: `--singleprompt_eval_mode seen` → **FlyGCL 공통 비교 조건**, 관측한 클래스만 예측.
+- 공식 평가 방식: `--singleprompt_eval_mode raw` → **공식 SinglePrompt처럼** 전체 logit 사용 (평가 샘플은 노출된 클래스).
+- 분류기: `--singleprompt_logit_type cos_sim` 기본, 필요 시 `linear`.
+
+**공통 코드의 온라인 augmentation 구현 위치가 원본의 TwoCropsTransform과 다릅니다.** 실제 GPU 성능을 통해 원본 수치 일치가 확인된 것은 아니므로 공식 논문 성능 재현이라고 부르지 않습니다.
+
+## 구현 위치
+
+| 파일 | 용도 |
 |---|---|
-| [implementation/model.py](implementation/model.py) | 기존 FlyGCL ViT를 동결한 상태에서 공식 K/V Prefix와 cosine classifier를 구현한 **독립 모델** |
-| [scripts/verify_model.py](scripts/verify_model.py) | 공식 코드와 Prefix Attention·전체 ViT 출력·Prompt/FC 기울기 비교 |
-| [GitHub Actions](../../.github/workflows/verify-singleprompt-stage2.yml) | Python 3.10, torch 2.5.1+cpu, timm 0.6.12 환경에서 자동 검증 |
+| [implementation/model.py](implementation/model.py) | 공식 Prefix Attention과 Cosine FC를 사용하는 독립 모델 (공통 ViT 가중치 재사용) |
+| [implementation/trainer.py](implementation/trainer.py) | 기존 DualPrompt의 공통 online train/eval 코드를 재사용하는 SinglePrompt 전용 Adapter |
+| [scripts/run_singleprompt.sh](scripts/run_singleprompt.sh) | 실제 데이터로 Si-Blurry 실행하는 CLI 명령 |
+| [scripts/verify_model.py](scripts/verify_model.py) | 공식 전체 ViT-B/16 vs 통합 모델 Forward/Backward parity (CPU) |
+| [scripts/verify_integration.py](scripts/verify_integration.py) | `main.py` → 공통 Trainer/Si-Blurry 5 Task·Optimizer·평가·결과 저장 (CPU) |
 
-기존 `models/vit.py`·`methods/_trainer.py`·다른 비교군은 수정하지 않았습니다. 공식 원본 코드는 `original/SinglePrompt/`에 그대로 보존했습니다.
+`models/singleprompt.py`, `methods/singleprompt.py`는 짧은 연결 파일이고, 각 registry와 `configuration/config.py`에는 선택·옵션 등록만 추가했습니다. **공유 ViT, 공통 Trainer, 다른 비교군, 공식 SinglePrompt 원본 코드는 수정하지 않았습니다.**
 
-## CPU 모델 테스트 (저장소 루트)
-
-FlyGCL의 필수 패키지 설치 후:
+## 검증 재실행
 
 ```bash
 PYTHONPATH=. python -m dongkyu_work.singleprompt.scripts.verify_model
+PYTHONPATH=. python -m dongkyu_work.singleprompt.scripts.verify_integration
 ```
 
-테스트는 **사전학습 백본 다운로드 없이**, 랜덤으로 초기화한 동일한 전체 ViT-B/16의 파라미터를 복사해 비교합니다. 공식 사전학습 체크포인트 로딩, 실제 데이터·GPU 성능은 검증하지 않습니다.
-
-## 다음 3단계
-
-공통 FlyGCL `_Trainer`·Si-Blurry sampler와 연결하고, `--method singleprompt`를 등록합니다. 공식 학습 batch mask 및 공식 raw-logit 평가와 FlyGCL seen-class 평가를 명시적으로 구분합니다.
+검증 도구는 실데이터·외부 백본 다운로드·GPU 없이 합성 데이터를 사용합니다. 검증 스크립트의 경량 ViT 및 CPU 장치 어댑터는 **테스트에서만 적용**되며 실제 모델 코드는 바뀌지 않습니다.
