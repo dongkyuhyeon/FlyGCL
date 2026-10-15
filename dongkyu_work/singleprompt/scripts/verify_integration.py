@@ -103,7 +103,8 @@ def check_eval_policies():
         assert math.isfinite(seen["avg_loss"])
         reference_mask = method.mask
         method.singleprompt_eval_mode = "raw"
-        raw = method.online_evaluate(data)
+        # Shared evaluator maps label tensors in place; provide a fresh batch.
+        raw = method.online_evaluate([(torch.zeros(1, 3, 8, 8), torch.tensor([3]))])
         assert raw["avg_acc"] == 0.0
         assert raw["avg_loss"] > seen["avg_loss"]
         assert method.mask is reference_mask, "Evaluation mode leaked into train mask"
