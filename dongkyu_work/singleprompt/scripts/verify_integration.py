@@ -94,6 +94,7 @@ def check_eval_policies():
         method.mask = torch.full((100,), -torch.inf)
         method.mask[:2] = 0
         method.model = UnseenWins()
+        method.model_without_ddp = method.model
         method.criterion = nn.CrossEntropyLoss(reduction="mean")
         data = [(torch.zeros(1, 3, 8, 8), torch.tensor([3]))]
 
