@@ -48,6 +48,9 @@ def verify_independent_backbone_classes():
     original_path = ROOT / "dongkyu_work/misa/original/MISA/models/vit.py"
     spec = importlib.util.spec_from_file_location("_misa_official_vit_audit", original_path)
     upstream_module = importlib.util.module_from_spec(spec)
+    # timm.register_model resolves decorators through sys.modules.
+    import sys
+    sys.modules[spec.name] = upstream_module
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
         spec.loader.exec_module(upstream_module)
