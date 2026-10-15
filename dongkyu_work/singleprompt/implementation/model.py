@@ -9,7 +9,6 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from models import vit as shared_vit
 
 
 class SinglePrompt(nn.Module):
@@ -36,6 +35,9 @@ class SinglePrompt(nn.Module):
             raise ValueError("len_prompt must be a positive integer")
         if singleprompt_logit_type not in ("linear", "cos_sim"):
             raise ValueError("singleprompt_logit_type must be linear or cos_sim")
+
+        # Import after model registry initialization to avoid a circular import.
+        from models import vit as shared_vit
 
         # Reuse FlyGCL's existing pretrained ViT weight loader, not its
         # task-aware prompt-pool wrappers. All backbone parameters are frozen.
