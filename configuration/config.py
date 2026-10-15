@@ -56,6 +56,12 @@ def base_parser():
     parser.add_argument("--lwf_temperature", type=float, default=2.0, help="Temperature for LwF knowledge distillation.")
     parser.add_argument("--lwf_teacher_on_gpu", action=argparse.BooleanOptionalAction, default=True, help="Keep the frozen LwF teacher model on GPU.")
 
+    # ============= SinglePrompt (CVPR Findings 2026) ============
+    parser.add_argument("--singleprompt_logit_type", choices=["cos_sim", "linear"],
+                        default="cos_sim", help="Official SinglePrompt classifier: cosine (default) or linear.")
+    parser.add_argument("--singleprompt_eval_mode", choices=["seen", "raw"],
+                        default="seen", help="FlyGCL seen-class evaluation (default) or official raw-logit evaluation.")
+
     # ============= MISA configurations ============
     parser.add_argument('--load_pt', action='store_true', default=False, help='load pretrained prompts (legacy DualPrompt option)')
     parser.add_argument('--misa_prompt_dir', type=str, default='./dongkyu_work/misa/checkpoints',

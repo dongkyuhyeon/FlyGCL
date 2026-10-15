@@ -1,6 +1,7 @@
 from .codaprompt import CodaPrompt
 from .dualprompt import DualPrompt
 from .misa import MISA as MISATrainer
+from .singleprompt import SinglePromptTrainer
 from .flyprompt import FlyPrompt
 from .l2p import L2P
 from .mvp import MVP
@@ -17,6 +18,7 @@ METHODS = {
     "codaprompt": CodaPrompt,
     "dualprompt": DualPrompt,
     "misa": MISATrainer,
+    "singleprompt": SinglePromptTrainer,
     "flyprompt": FlyPrompt,
     "flyadapter": FlyPrompt,
     "flylora": FlyPrompt,
