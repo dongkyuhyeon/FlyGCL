@@ -38,10 +38,39 @@ def assert_same(tag, left, right, tol=0):
         delta = (left.detach()-right.detach()).abs().max().item()
         raise AssertionError(f"{tag}: max |diff| {delta:.8g}") from err
 
+
+def verify_independent_backbone_classes():
+    """Compare original MISA ViT class with FlyGCL ViT class, no weight copies."""
+    import importlib.util
+    import warnings
+    import gc
+    import models.vit as current_vit
+    original_path = ROOT / "dongkyu_work/misa/original/MISA/models/vit.py"
+    spec = importlib.util.spec_from_file_location("_misa_official_vit_audit", original_path)
+    upstream_module = importlib.util.module_from_spec(spec)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", UserWarning)
+        spec.loader.exec_module(upstream_module)
+    config = dict(img_size=224, patch_size=16, embed_dim=768, depth=12,
+                  num_heads=12, num_classes=100, drop_rate=0.0, drop_path_rate=0.0)
+    torch.manual_seed(137)
+    official_vit = upstream_module.VisionTransformer(**config)
+    torch.manual_seed(137)
+    local_vit = current_vit.VisionTransformer(**config)
+    a, b = official_vit.state_dict(), local_vit.state_dict()
+    assert set(a) == set(b), (set(a)^set(b))
+    for k in a:
+        assert_same("original_ViT_vs_FlyGCL."+k, a[k], b[k])
+    assert len(official_vit.blocks) == len(local_vit.blocks) == 12
+    print(f"PASS independently constructed ORIGINAL and FlyGCL ViT classes: {len(a)} tensors exact",flush=True)
+    del official_vit,local_vit,a,b
+    gc.collect()
+
 def main():
     import models.vit as vit
     from dongkyu_work.misa.implementation.model import MISA
     torch.set_num_threads(2)
+    verify_independent_backbone_classes()
     seed = 1993
     backbone_constructor = vit.vit_base_patch16_224
     def random_vit(name=None, pretrained=True, num_classes=100):
