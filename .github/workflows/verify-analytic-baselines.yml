@@ -14,6 +14,14 @@ on:
       - 'datasets/**'
       - 'main.py'
       - '.github/workflows/verify-analytic-baselines.yml'
+  pull_request:
+    paths:
+      - 'dongkyu_work/air/**'
+      - 'dongkyu_work/analytic_common/**'
+      - 'models/**'
+      - 'methods/**'
+      - 'configuration/**'
+      - '.github/workflows/verify-analytic-baselines.yml'
   workflow_dispatch:
 permissions:
   contents: read
