@@ -42,6 +42,9 @@ def check_evaluator(method):
     from methods.dualprompt import DualPrompt
     with tempfile.TemporaryDirectory() as td, patch.object(sys, 'argv', ['main.py', '--method', method, '--log_path', td]):
         args = base_parser()
+        if method == 'air':
+            assert args.air_expansion_size == 8192 and args.air_max_stats_gib == 64.0
+            assert args.analytic_stats_device == 'auto'
         trainer = METHODS[method](**vars(args))
         trainer.device = torch.device('cpu')
         trainer.n_classes = 100
