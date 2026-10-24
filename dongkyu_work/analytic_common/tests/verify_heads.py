@@ -125,11 +125,18 @@ def verify_method(method):
     if method == 'air':
         from dongkyu_work.air.implementation.head import AIRHead
         try:
-            AIRHead(8192, 100)
+            AIRHead(8192, 100, max_stats_gib=8.0)
         except ValueError as error:
             assert '50.00 GiB' in str(error)
         else:
             raise AssertionError('AIR must reject oversized statistics before allocation')
+    if method == 'air':
+        cached = make_head('air')
+        cached.fit(x[:3], y[:3])
+        assert bool(cached.dirty)
+        torch.testing.assert_close(cached.forward_cached(x[:2]), torch.zeros(2, 4, dtype=x.dtype))
+        assert bool(cached.dirty)
+        cached(x[:2]); assert not bool(cached.dirty)
     print(f'PASS {method}: official-core parity at every prefix, 3 partitions, checkpoint continuation')
 
 
