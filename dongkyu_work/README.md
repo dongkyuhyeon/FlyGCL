@@ -6,6 +6,9 @@
 
 | 프로젝트 | 목적 | 바로가기 |
 | --- | --- | --- |
+| **[AIR](air/README.md)** | 공식 핵심 수식을 FlyGCL 공통 스트림·seen-class 평가에 통합 | [실행](air/README.md) · [검증](air/notes/VERIFICATION.md) |
+| **[GACL](gacl/README.md)** | 공식 핵심 수식을 FlyGCL 공통 스트림·seen-class 평가에 통합 | [실행](gacl/README.md) · [검증](gacl/notes/VERIFICATION.md) |
+| **[SLDA](slda/README.md)** | 공식 핵심 수식을 FlyGCL 공통 스트림·seen-class 평가에 통합 | [실행](slda/README.md) · [검증](slda/notes/VERIFICATION.md) |
 | **[SinglePrompt (CVPR Findings 2026)](singleprompt/README.md)** | FlyGCL `--method singleprompt` 통합 · CPU 검증 완료 | [시작 안내](singleprompt/README.md) · [최종 검증](singleprompt/notes/STAGE3_VERIFICATION.md) |
 | **[MISA (ICLR 2025)](misa/README.md)** | 공식 MISA를 FlyGCL의 `--method misa` 비교군으로 통합 | [시작 안내](misa/README.md) · [최종 검증](misa/notes/FINAL_REPORT.md) |
 
@@ -18,3 +21,5 @@
 **읽는 순서:** 프로젝트 README → `implementation/`(실제 코드) 또는 `scripts/`(실행·검증) → `notes/`(세부 증빙).
 
 기존 FlyGCL 공통 코드는 다른 비교군과 공유하므로 여기에 복사하지 않습니다. 실제 폴더 이름은 **`dongkyu_work/`**입니다.
+
+AIR/GACL/SLDA의 공통 실행 조건은 [analytic_common/README.md](analytic_common/README.md)를 확인하세요.

@@ -1,3 +1,6 @@
+from .air import AIR
+from .gacl import GACL
+from .slda import SLDA
 from .codaprompt import CodaPrompt
 from .dualprompt import DualPrompt
 from .misa import MISA
@@ -15,6 +18,10 @@ from .sprompt import SPrompt
 from .finetune_vit import FinetuneViT
 
 MODELS = {
+    "air": AIR,
+    "gacl": GACL,
+    "slda": SLDA,
+
     "codaprompt": CodaPrompt,
     "dualprompt": DualPrompt,
     "misa": MISA,

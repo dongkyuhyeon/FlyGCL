@@ -1,3 +1,6 @@
+from .air import AIRTrainer
+from .gacl import GACLTrainer
+from .slda import SLDATrainer
 from .codaprompt import CodaPrompt
 from .dualprompt import DualPrompt
 from .misa import MISA as MISATrainer
@@ -15,6 +18,10 @@ from .lwf import LwF
 from .seq_baselines import LinearProbe, SeqFinetune, SeqFinetuneSmallLR
 
 METHODS = {
+    "air": AIRTrainer,
+    "gacl": GACLTrainer,
+    "slda": SLDATrainer,
+
     "codaprompt": CodaPrompt,
     "dualprompt": DualPrompt,
     "misa": MISATrainer,

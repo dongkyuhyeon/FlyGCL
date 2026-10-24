@@ -9,9 +9,11 @@ BASE = "30b102c26e6c129d6f134a53552a409ad552f2ad"
 CORE = [
     "main.py", "models/dualprompt.py", "methods/dualprompt.py",
     "methods/flyprompt.py", "methods/_trainer.py", "models/l2p.py",
-    "utils/onlinesampler.py", "utils/train_utils.py", "models/vit.py",
+    "utils/onlinesampler.py", "utils/train_utils.py",
     "requirements.txt", "datasets/OnlineIterDataset.py",
 ]
+# Reviewed NPZ dispatch-only compatibility fix; all other core files stay frozen.
+VIT_COMPAT_BLOB = "3cccc835249cdec5421493eeb9596614e37f8589"
 ORIGINAL = "dongkyu_work/misa/original/MISA"
 EXPECTED = {
     "g_prompt.pt": "b21ade5ab36b97346a3e7a5b54e9ef6aaaffed53",
@@ -30,12 +32,13 @@ def blob_sha(path):
 
 def main():
     assert run_git("cat-file", "-t", BASE) == "commit", "checkout needs fetch-depth: 0"
-    modified = run_git("diff", "--name-only", BASE, "HEAD",
+    modified = run_git("diff", "--name-only", BASE,
                        "--", *CORE, ORIGINAL)
     assert modified == "", "Shared baseline or original MISA modified: " + modified
     originals = [p for p in (ROOT / ORIGINAL).rglob("*") if p.is_file()]
     assert len(originals) == 60, f"Expected 60 official original files, found {len(originals)}"
-    print("PASS original sources: 60 MISA files and 11 FlyGCL core files unchanged")
+    assert blob_sha(ROOT / "models/vit.py") == VIT_COMPAT_BLOB, "Unexpected ViT change beyond approved NPZ compatibility fix"
+    print("PASS original sources: 60 MISA files and 10 core files unchanged; exact approved NPZ loader fix")
 
     for filename, expected in EXPECTED.items():
         path = ROOT / "dongkyu_work/misa/checkpoints" / filename

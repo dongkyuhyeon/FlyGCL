@@ -26,7 +26,7 @@ FlyGCL is a practical framework for **General Continual Learning (GCL) / online 
 
 ### Python environment
 
-- **Python**: 3.10+
+- **Python**: 3.10 (validated with pinned `timm==0.6.12`; Python 3.12 is incompatible with its dataclass definitions)
 - **PyTorch / CUDA**: please follow the official PyTorch instructions for your CUDA version, and then install the remaining dependencies.
 
 We recommend:
@@ -261,3 +261,7 @@ If you have any questions, suggestions, please feel free to report issues or con
 ## 📄 License
 
 MIT. See `LICENSE`.
+
+## Additional analytic baselines
+
+[AIR](dongkyu_work/air/README.md), [GACL](dongkyu_work/gacl/README.md), and [SLDA](dongkyu_work/slda/README.md) are available as `--method air`, `--method gacl`, and `--method slda` with separate implementation/source/launcher folders. See [shared settings and verification](dongkyu_work/analytic_common/README.md). AIR uses a practical default expansion of 1024; the official library's 8192 setting is selectable and needs substantially more memory. Upstream GACL sources and its adapted analytic head retain GPL-3.0 licensing.

@@ -1,6 +1,6 @@
 """Validate newcomer navigation and local Markdown links in dongkyu_work.
 
-Pure standard library; deliberately excludes immutable MISA upstream snapshot.
+Pure standard library; deliberately excludes immutable upstream snapshots.
 From repository root:
   python dongkyu_work/misa/scripts/verify_docs.py
 """
@@ -32,7 +32,7 @@ def main():
 
     all_docs = sorted(
         p for p in WORKSPACE.rglob("*.md")
-        if "original/MISA" not in p.relative_to(WORKSPACE).as_posix()
+        if "original" not in p.relative_to(WORKSPACE).parts
     )
     issues = []
     checked_links = 0
