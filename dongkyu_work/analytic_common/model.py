@@ -4,7 +4,7 @@ from torch import nn
 
 
 class FrozenAnalyticModel(nn.Module):
-    def __init__(self, backbone_name, num_classes, analytic_stats_device='model', **kwargs):
+    def __init__(self, backbone_name, num_classes, analytic_stats_device='auto', **kwargs):
         super().__init__()
         # Local imports avoid importing the model registry while it initializes.
         from models import vit
@@ -14,9 +14,9 @@ class FrozenAnalyticModel(nn.Module):
         self.backbone = factory(**opts) if factory else timm.create_model(backbone_name, **opts)
         self.feature_dim = self.backbone.num_features
         self.num_classes = num_classes
-        if analytic_stats_device not in ('model', 'cpu'):
-            raise ValueError('analytic_stats_device must be model or cpu')
-        self.stats_device_policy = analytic_stats_device
+        if analytic_stats_device not in ('auto', 'model', 'cpu'):
+            raise ValueError('analytic_stats_device must be auto, model or cpu')
+        self.stats_device_policy = 'model' if analytic_stats_device == 'auto' else analytic_stats_device
         self.head = None
         self.projection = None
         self.requires_grad_(False)
@@ -64,7 +64,10 @@ class FrozenAnalyticModel(nn.Module):
         self.head.fit(features, labels)
 
     @torch.no_grad()
-    def scores(self, features, device):
+    def scores(self, features, device, refresh=True):
+        # AIR diagnostic metrics can use cached weights without solving per batch.
+        if not refresh and hasattr(self.head, 'forward_cached'):
+            return self.head.forward_cached(features).to(device=device)
         return self.head(features).to(device=device)
 
     @torch.no_grad()

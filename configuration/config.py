@@ -136,13 +136,14 @@ def base_parser():
                         help="If set, run expert feature similarity / CKA (including residual vs common) analysis after training.")
 
     # Frozen-feature analytic baselines
-    parser.add_argument('--analytic_stats_device', choices=['model', 'cpu'], default='model')
+    parser.add_argument('--analytic_stats_device', choices=['auto', 'model', 'cpu'], default='auto',
+                        help='Auto: AIR statistics on CPU, GACL/SLDA on model device')
     parser.add_argument('--gacl_expansion_size', type=int, default=5000)
     parser.add_argument('--gacl_gamma', type=float, default=100.0)
-    parser.add_argument('--air_expansion_size', type=int, default=1024,
-                        help='Practical default; official analytic library default is 8192')
+    parser.add_argument('--air_expansion_size', type=int, default=8192,
+                        help='Official AIR default; needs 50 GiB class statistics for 100 classes')
     parser.add_argument('--air_gamma', type=float, default=0.1)
-    parser.add_argument('--air_max_stats_gib', type=float, default=8.0,
+    parser.add_argument('--air_max_stats_gib', type=float, default=64.0,
                         help='Safety limit for stored class covariance tensors, excluding working memory')
     parser.add_argument('--slda_shrinkage', type=float, default=1e-4)
 

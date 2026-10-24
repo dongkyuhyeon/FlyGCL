@@ -39,7 +39,7 @@ class AnalyticTrainer(_Trainer):
         self.model_without_ddp = self.model
         self.criterion = nn.CrossEntropyLoss()
         logger.info('Analytic method=%s; stats=%s; online_iter=%s repeats feature/statistic updates; optimizer/lr unused',
-                    self.method, self.analytic_stats_device, self.online_iter)
+                    self.method, self.model.stats_device_policy, self.online_iter)
 
     def update_schedule(self, reset=False):
         pass  # Closed-form/statistical updates have no optimizer or LR schedule.
@@ -58,7 +58,7 @@ class AnalyticTrainer(_Trainer):
             augmented = self.train_transform(images.clone().to(self.device))
             features = self.model.expand(self.model.features(augmented))
             self.model.fit_features(features, targets)
-            logits = self.model.scores(features, self.device) + self.mask
+            logits = self.model.scores(features, self.device, refresh=self.method != 'air') + self.mask
             loss_sum += self.criterion(logits, targets).item()
             preds = logits.topk(min(self.topk, len(self.exposed_classes)), 1).indices
             acc_sum += (preds == targets[:, None]).any(1).float().mean().item()
