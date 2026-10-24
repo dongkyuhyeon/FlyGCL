@@ -9,6 +9,7 @@ import importlib.util
 import io
 import json
 import os
+from unittest.mock import patch
 from pathlib import Path
 from types import SimpleNamespace
 import torch
@@ -130,6 +131,15 @@ def verify_method(method):
             assert '50.00 GiB' in str(error)
         else:
             raise AssertionError('AIR must reject oversized statistics before allocation')
+        # Official dimensions pass the configured cap but must not allocate if
+        # the server has too little RAM (mock the preflight: no 50 GiB allocation).
+        with patch.object(AIRHead, '_host_available_bytes', return_value=2 * 2**30):
+            try:
+                AIRHead(8192, 100)
+            except MemoryError as error:
+                assert '54.0 GiB' in str(error)
+            else:
+                raise AssertionError('AIR must reject insufficient available memory')
     if method == 'air':
         cached = make_head('air')
         cached.fit(x[:3], y[:3])
