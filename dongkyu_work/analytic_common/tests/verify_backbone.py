@@ -35,7 +35,9 @@ def main():
     images = torch.randn(2, 3, 224, 224)
     reference_features = None
     for method in ('air', 'gacl', 'slda'):
-        model = MODELS[method](backbone_name='vit_base_patch16_224', num_classes=100)
+        # CPU smoke test uses a small AIR head; official 8192 needs >=50 GiB.
+        head_args = {'air_expansion_size': 1024} if method == 'air' else {}
+        model = MODELS[method](backbone_name='vit_base_patch16_224', num_classes=100, **head_args)
         check_checkpoint(model.backbone, checkpoint)
         model.initialize_statistics()
         model.eval()
@@ -72,7 +74,7 @@ def main():
         for chunk in iter(lambda: file.read(2**20), b''):
             digest.update(chunk)
     print('Checkpoint SHA256:', digest.hexdigest())
-    print('LIMIT: CPU random-input checks; GPU/data accuracy experiments not performed')
+    print('LIMIT: AIR smoke test uses 1024, not the official 8192. GPU/data accuracy experiments not performed')
 
 
 if __name__ == '__main__':
